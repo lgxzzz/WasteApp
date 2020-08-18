@@ -13,6 +13,7 @@ import com.mysql.app.R;
 
 public class TitleView extends RelativeLayout {
     private Button mBackBtn;
+    private Button mOtherBtn;
     private TextView mTitleView;
 
     public TitleView(Context context) {
@@ -49,5 +50,10 @@ public class TitleView extends RelativeLayout {
 
     public void setOnBackListener(OnClickListener listener){
         mBackBtn.setOnClickListener(listener);
+    }
+
+    public void setOtherBtn(String text,OnClickListener listener){
+        mOtherBtn.setText(text);
+        mOtherBtn.setOnClickListener(listener);
     }
 }

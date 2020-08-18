@@ -1,6 +1,8 @@
 package com.mysql.app.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /***
  * 日期转换工具
@@ -50,5 +52,11 @@ public class DateUtil {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int[] date = new int[]{year,month,day};
         return date;
+    }
+
+    public static String parseTime(long time){
+        Date d = new Date(time);
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sf.format(d);
     }
 }

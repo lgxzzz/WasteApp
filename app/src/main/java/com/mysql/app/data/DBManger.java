@@ -236,6 +236,11 @@ public class DBManger {
 
     }
 
+    //获取所有垃圾数据
+    public List<Waste> getWastesByUser(User user){
+        return null;
+    }
+
     String pattern = "yyyy-MM-dd HH:mm:ss";
     public static long getStringToDate(String dateString, String pattern) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);

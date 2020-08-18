@@ -9,120 +9,54 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mysql.app.adapter.WasteAdapter;
 import com.mysql.app.bean.User;
+import com.mysql.app.bean.Waste;
 import com.mysql.app.data.DBManger;
+import com.mysql.app.view.TitleView;
+
+import java.util.List;
 
 
 /***
  * 查看发布列表
  *
  * */
-public class PostedRecordActivity extends Activity implements View.OnClickListener{
+public class PostedRecordActivity extends Activity{
 
-    private TextView mRegisterView;
-    private EditText mNameEd;
-    private EditText mPassWordEd;
-    private String mName;
-    private String mPassWord;
-    private Button mLoginBtn;
-    private Button mCloseBtn;
+    private TitleView mTitleView;
+    private ListView mListView;
+    private WasteAdapter mAdapter;
     private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        init();
+        setContentView(R.layout.activity_posted_record);
+        initView();
+        initData();
     }
 
-    public void init(){
-
-        mRegisterView = findViewById(R.id.login_to_register_btn);
-        mRegisterView.setOnClickListener(this);
-        mCloseBtn = findViewById(R.id.close_btn);
-        mNameEd = findViewById(R.id.reg_name_ed);
-        mPassWordEd = findViewById(R.id.reg_password_ed);
-        mCloseBtn.setOnClickListener(this);
-        mLoginBtn = findViewById(R.id.reg_login_btn);
-        mLoginBtn.setOnClickListener(this);
-
-
-        mNameEd.addTextChangedListener(new TextWatcher() {
+    public void initView(){
+        mTitleView = findViewById(R.id.title_view);
+        mTitleView.setTitle("Posted Record");
+        mTitleView.setOnBackListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                mName = editable.toString();
-            }
-        });
-
-        mPassWordEd.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-               mPassWord = editable.toString();
-            }
-        });
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.close_btn:
+            public void onClick(View v) {
                 finish();
-                break;
-            case R.id.login_to_register_btn:
-                startActivity(new Intent(PostedRecordActivity.this, RegisterActivity.class));
-                break;
-            case R.id.reg_login_btn:
-                //登录操作
-                DBManger.getInstance(PostedRecordActivity.this).login(mName, mPassWord, new DBManger.IListener() {
-                    @Override
-                    public void onSuccess() {
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(PostedRecordActivity.this,"Login Success!", Toast.LENGTH_LONG).show();
-                                User user = DBManger.getInstance(getBaseContext()).mUser;
-                                startActivity(new Intent(PostedRecordActivity.this, MainActivity.class));
-                                PostedRecordActivity.this.finish();
-                            }
-                        });
+            }
+        });
+        mListView = findViewById(R.id.waste_posted_record_listview);
+    }
 
-                    }
-
-                    @Override
-                    public void onError(String error) {
-
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(PostedRecordActivity.this,error, Toast.LENGTH_LONG).show();
-                            }
-                        });
-                    }
-                });
-                break;
-        }
+    public void initData(){
+        User user = DBManger.getInstance(this).mUser;
+        List<Waste> mWastes = DBManger.getInstance(this).getWastesByUser(user);
+        mAdapter = new WasteAdapter(this,mWastes);
+        mListView.setAdapter(mAdapter);
     }
 }
