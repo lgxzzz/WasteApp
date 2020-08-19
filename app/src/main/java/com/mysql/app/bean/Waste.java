@@ -3,6 +3,7 @@ package com.mysql.app.bean;
 import java.io.Serializable;
 
 public class Waste implements Serializable {
+    public String Id;
     public String Name;
     public String Type;
     public String Description;
@@ -65,5 +66,13 @@ public class Waste implements Serializable {
 
     public void setTime(long time) {
         Time = time;
+    }
+
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
     }
 }

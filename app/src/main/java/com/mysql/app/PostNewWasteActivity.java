@@ -85,6 +85,7 @@ public class PostNewWasteActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mSelectType = mTypes.get(position);
+                mWaste.setType(mSelectType);
             }
 
             @Override
@@ -176,7 +177,7 @@ public class PostNewWasteActivity extends AppCompatActivity {
                     Toast.makeText(PostNewWasteActivity.this,"Waste disposal description input should not exceed 100 characters.", Toast.LENGTH_LONG).show();
                     return;
                 }
-                if (mWaste.getDescription()!=null&& mWaste.getDescription().length()>13){
+                if (mWaste.getBarCode()!=null&& mWaste.getBarCode().length()>13){
                     Toast.makeText(PostNewWasteActivity.this,"Waste barcode identification code input should not exceed 13 integers", Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -188,6 +189,7 @@ public class PostNewWasteActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 Toast.makeText(PostNewWasteActivity.this,"Successful post", Toast.LENGTH_LONG).show();
+                                finish();
                             }
                         });
                     }

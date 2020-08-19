@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.mysql.app.bean.Evaluation;
 import com.mysql.app.bean.User;
 import com.mysql.app.bean.Waste;
 
@@ -233,12 +234,150 @@ public class DBManger {
 
 
     public void insertWaset(Waste waste,IListener listener){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //判断该垃圾是否已存在
+                if (isWasteExist(waste)){
+                    listener.onError("The waste is already exist！");
+                    return;
+                }
+                // 插入数据的 sql 语句
+                String insert_user_sql = "insert into Waste (WASTE_ID, WASTE_NAME,WASTE_TYPE,WASTE_DES,USER_ID,WASTE_BARCODE,WASTE_SCORE,CREAT_TIME) values (?,?,?,?,?,?,?,?)";
+                PreparedStatement ps = null;
+                if (conn == null) {
+                    return;
+                }
+                try {
+                    ps = conn.prepareStatement(insert_user_sql);
+                    String userid = getRandomUSER_ID();
+                    // 为两个 ? 设置具体的值
+                    ps.setString(1, getRandomWaste_ID());
+                    ps.setString(2, waste.getName());
+                    ps.setString(3, waste.getType());
+                    ps.setString(4, waste.getDescription());
+                    ps.setString(5, mUser.getUserId());
+                    ps.setString(6, waste.getBarCode());
+                    ps.setString(7, waste.getScore());
+                    ps.setLong(8, System.currentTimeMillis());
+                    // 执行语句
+                    int x = ps.executeUpdate();
+                    if (x!=-1){
+                        listener.onSuccess();
+                    }else{
+                        listener.onError("insert waste fail！");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (ps != null) {
+                        try {
+                            ps.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
 
+    public boolean isWasteExist(Waste waste){
+        // 插入数据的 sql 语句
+        String insert_user_sql = "select * from Waste where WASTE_ID = ?";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return false;
+        }
+        try {
+            ResultSet rs = null;
+            ps = conn.prepareStatement(insert_user_sql);
+            String userid = getRandomUSER_ID();
+            // 为两个 ? 设置具体的值
+            ps.setString(1, waste.getId());
+            // 执行语句
+            rs = ps.executeQuery();
+            if (rs!=null){
+                while (rs.next()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
+
+    //查询该垃圾的所有评价
+    public List<Evaluation> queryEvaluations(User user){
+        return null;
     }
 
     //获取所有垃圾数据
-    public List<Waste> getWastesByUser(User user){
-        return null;
+    public void getWastesByUser(User user,IWasteListener listener){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Waste> wastes = new ArrayList<>();
+                // 插入数据的 sql 语句
+                String sql = "select * from Waste where USER_ID = ?";
+                PreparedStatement ps = null;
+                if (conn == null) {
+                    return;
+                }
+                try {
+
+                    ResultSet rs = null;
+                    ps = conn.prepareStatement(sql);
+                    ps.setString(1, mUser.getUserId());
+                    // 执行语句
+                    rs = ps.executeQuery();
+                    if (rs!=null){
+                        // 展开结果集数据库
+                    while(rs.next()){
+                        // 通过字段检索
+                        String WASTE_ID = rs.getString("WASTE_ID");
+                        String WASTE_NAME = rs.getString("WASTE_NAME");
+
+                        Waste waste = new Waste();
+                        waste.setId(WASTE_ID);
+                        waste.setName(WASTE_NAME);
+                        wastes.add(waste);
+                        }
+                        listener.onSuccess(wastes);
+                    }
+
+//                    ps = conn.prepareStatement(sql);
+//                    ps.setString(1, user.getUserId());
+//                    // 执行语句
+//                    ResultSet rs = ps.executeQuery(sql);
+//
+//
+                    // 完成后关闭
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    listener.onError("");
+                } finally {
+                    if (ps != null) {
+                        try {
+                            ps.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
     }
 
     String pattern = "yyyy-MM-dd HH:mm:ss";
@@ -271,10 +410,21 @@ public class DBManger {
         return strRand;
     }
 
+    //生成随机userid
+    public String getRandomWaste_ID(){
+        String strRand="W" ;
+        for(int i=0;i<10;i++){
+            strRand += String.valueOf((int)(Math.random() * 10)) ;
+        }
+        return strRand;
+    }
     public interface IListener{
         public void onSuccess();
         public void onError(String error);
     };
-
+    public interface IWasteListener{
+        public void onSuccess(List<Waste> wastes);
+        public void onError(String error);
+    };
 
 }

@@ -4,9 +4,18 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.mysql.app.adapter.EvaAdapter;
+import com.mysql.app.bean.Evaluation;
+import com.mysql.app.bean.User;
+import com.mysql.app.data.DBManger;
 import com.mysql.app.view.TitleView;
+
+import java.util.List;
 
 
 /***
@@ -17,6 +26,15 @@ public class WasteInformationActivity extends Activity{
 
     private TitleView mTitleView;
     private ListView mEvaListView;
+    private EvaAdapter mAdapter;
+    private TextView mNameTv;
+    private TextView mTypeTv;
+    private TextView mDescriptionTv;
+    private TextView mScoreTv;
+    private TextView mUserTv;
+    private EditText mCommentEd;
+    private Button mSendBtn;
+
     private Handler mHandler = new Handler();
 
     @Override
@@ -24,6 +42,7 @@ public class WasteInformationActivity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waste_info);
         init();
+        initData();
     }
 
     public void init(){
@@ -41,11 +60,19 @@ public class WasteInformationActivity extends Activity{
 
             }
         });
+        mEvaListView = findViewById(R.id.comments_listview);
+        mNameTv = findViewById(R.id.waste_name_tv);
+        mTypeTv = findViewById(R.id.waste_type_tv);
+        mDescriptionTv = findViewById(R.id.description_tv);
+        mScoreTv = findViewById(R.id.score_tv);
+        mUserTv = findViewById(R.id.user_tv);
+        mCommentEd = findViewById(R.id.send_comments_ed);
+        mSendBtn = findViewById(R.id.send_comments_btn);
     }
 
     public void initData(){
-        List<Evaluation> evaluations = DBManager.getInstance(this).queryEvaluations(null,
-                "tch_name =? and course_name =?",new String[]{mTchName,mCourseName},null,null,"id desc");
+        User user  = DBManger.getInstance(this).mUser;
+        List<Evaluation> evaluations = DBManger.getInstance(this).queryEvaluations(user);
         if (evaluations==null){
             return;
         }
@@ -55,32 +82,16 @@ public class WasteInformationActivity extends Activity{
         Float allScore = 0.0f;
         for (int i=0;i<evaluations.size();i++){
             String score = evaluations.get(i).getEva_score();
-            if (score.equals("4.5")||score.equals("5.0"))
-            {
-                mEvaScores[4]=++mEvaScores[4];
-            }else if(score.equals("3.5")||score.equals("4.0"))
-            {
-                mEvaScores[3]=++mEvaScores[3];
-            }else if(score.equals("2.5")||score.equals("3.0"))
-            {
-                mEvaScores[2]=++mEvaScores[2];
-            }else if(score.equals("1.5")||score.equals("2.0"))
-            {
-                mEvaScores[1]=++mEvaScores[1];
-            }else if(score.equals("0.0")||score.equals("1.0"))
-            {
-                mEvaScores[0]=++mEvaScores[0];
-            }
             Float sc = Float.parseFloat(score);
             allScore= allScore+sc;
         }
         if (allScore!=0.0f)
         {
+            //计算评价得分
             double sroce = allScore/evaluations.size();
             java.text.DecimalFormat myformat=new java.text.DecimalFormat("0.0");
             String str = myformat.format(sroce);
-
-            mEvaScore.setText(str);
+            mScoreTv.setText(str);
         }
     }
 }

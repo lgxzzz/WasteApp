@@ -55,8 +55,23 @@ public class PostedRecordActivity extends Activity{
 
     public void initData(){
         User user = DBManger.getInstance(this).mUser;
-        List<Waste> mWastes = DBManger.getInstance(this).getWastesByUser(user);
-        mAdapter = new WasteAdapter(this,mWastes);
-        mListView.setAdapter(mAdapter);
+         DBManger.getInstance(this).getWastesByUser(user, new DBManger.IWasteListener() {
+            @Override
+            public void onSuccess(List<Waste> wastes) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter = new WasteAdapter(PostedRecordActivity.this,wastes);
+                        mListView.setAdapter(mAdapter);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
+
     }
 }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.mysql.app.LoginActivity;
 import com.mysql.app.PostNewWasteActivity;
+import com.mysql.app.PostedRecordActivity;
 import com.mysql.app.R;
 import com.mysql.app.bean.User;
 import com.mysql.app.data.DBManger;
@@ -30,6 +31,7 @@ public class AboutFragment extends Fragment {
     Button mLoginOutBtn;
     Button mCloseBtn;
     Button mPostNewBtn;
+    Button mPostRecordBtn;
     User mUser;
 
     @Override
@@ -57,6 +59,7 @@ public class AboutFragment extends Fragment {
         mUserRoleTv = view.findViewById(R.id.user_role_tv);
         mUserBtn = view.findViewById(R.id.user_btn);
         mPostNewBtn = view.findViewById(R.id.post_new_waste_btn);
+        mPostRecordBtn = view.findViewById(R.id.posted_record_btn);
     };
 
     public void initData() {
@@ -89,6 +92,12 @@ public class AboutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getContext(), PostNewWasteActivity.class));
+            }
+        });
+        mPostRecordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), PostedRecordActivity.class));
             }
         });
 

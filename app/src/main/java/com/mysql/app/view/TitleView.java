@@ -38,6 +38,7 @@ public class TitleView extends RelativeLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.title_view,this,true);
         mBackBtn = findViewById(R.id.title_back_btn);
         mTitleView = findViewById(R.id.title_content);
+        mOtherBtn = findViewById(R.id.other_btn);
     }
 
     public void setBackBtnVisible(boolean visible){
@@ -53,6 +54,7 @@ public class TitleView extends RelativeLayout {
     }
 
     public void setOtherBtn(String text,OnClickListener listener){
+        mOtherBtn.setVisibility(VISIBLE);
         mOtherBtn.setText(text);
         mOtherBtn.setOnClickListener(listener);
     }
