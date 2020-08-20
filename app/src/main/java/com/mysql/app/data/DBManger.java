@@ -282,6 +282,50 @@ public class DBManger {
         }).start();
     }
 
+    public void updateWaset(Waste waste,IListener listener){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // 插入数据的 sql 语句
+                String insert_user_sql = "insert into Waste (WASTE_ID, WASTE_NAME,WASTE_TYPE,WASTE_DES,USER_ID,WASTE_BARCODE,WASTE_SCORE,CREAT_TIME) values (?,?,?,?,?,?,?,?)";
+                PreparedStatement ps = null;
+                if (conn == null) {
+                    return;
+                }
+                try {
+                    ps = conn.prepareStatement(insert_user_sql);
+                    String userid = getRandomUSER_ID();
+                    // 为两个 ? 设置具体的值
+                    ps.setString(1, getRandomWaste_ID());
+                    ps.setString(2, waste.getName());
+                    ps.setString(3, waste.getType());
+                    ps.setString(4, waste.getDescription());
+                    ps.setString(5, mUser.getUserId());
+                    ps.setString(6, waste.getBarCode());
+                    ps.setString(7, waste.getScore());
+                    ps.setLong(8, System.currentTimeMillis());
+                    // 执行语句
+                    int x = ps.executeUpdate();
+                    if (x!=-1){
+                        listener.onSuccess();
+                    }else{
+                        listener.onError("insert waste fail！");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (ps != null) {
+                        try {
+                            ps.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
     public boolean isWasteExist(Waste waste){
         // 插入数据的 sql 语句
         String insert_user_sql = "select * from Waste where WASTE_ID = ?";
@@ -347,10 +391,22 @@ public class DBManger {
                         // 通过字段检索
                         String WASTE_ID = rs.getString("WASTE_ID");
                         String WASTE_NAME = rs.getString("WASTE_NAME");
+                        String WASTE_TYPE = rs.getString("WASTE_TYPE");
+                        String WASTE_DES = rs.getString("WASTE_DES");
+                        String USER_ID = rs.getString("USER_ID");
+                        String WASTE_BARCODE = rs.getString("WASTE_BARCODE");
+                        String WASTE_SCORE = rs.getString("WASTE_SCORE");
+                        long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
 
                         Waste waste = new Waste();
                         waste.setId(WASTE_ID);
                         waste.setName(WASTE_NAME);
+                        waste.setType(WASTE_TYPE);
+                        waste.setDescription(WASTE_DES);
+                        waste.setUserId(USER_ID);
+                        waste.setBarCode(WASTE_BARCODE);
+                        waste.setScore(WASTE_SCORE);
+                        waste.setTime(CREAT_TIME);
                         wastes.add(waste);
                         }
                         listener.onSuccess(wastes);

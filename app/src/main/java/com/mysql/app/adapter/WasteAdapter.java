@@ -56,9 +56,9 @@ public class WasteAdapter extends BaseAdapter {
             holer = new WasteAdapter.ViewHoler();
             view = LayoutInflater.from(mContext).inflate(R.layout.posted_record_item,null);
             holer.mName = (TextView) view.findViewById(R.id.waste_name_tv);
-            holer.mType = (TextView) view.findViewById(R.id.waste_name_tv);
-            holer.mScore = (TextView) view.findViewById(R.id.waste_name_tv);
-            holer.mTime = (TextView) view.findViewById(R.id.waste_name_tv);
+            holer.mType = (TextView) view.findViewById(R.id.waste_type_tv);
+            holer.mScore = (TextView) view.findViewById(R.id.score_tv);
+            holer.mTime = (TextView) view.findViewById(R.id.waste_time_tv);
             view.setTag(holer);
         }else{
             holer = (WasteAdapter.ViewHoler) view.getTag();
@@ -72,7 +72,7 @@ public class WasteAdapter extends BaseAdapter {
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, WasteInformationActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("DATA", msgInfo);
+                bundle.putSerializable("waste", msgInfo);
                 intent.putExtras(bundle);
                 mContext.startActivity(intent);
             }

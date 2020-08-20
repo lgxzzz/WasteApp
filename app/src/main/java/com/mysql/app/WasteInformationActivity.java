@@ -12,7 +12,9 @@ import android.widget.TextView;
 import com.mysql.app.adapter.EvaAdapter;
 import com.mysql.app.bean.Evaluation;
 import com.mysql.app.bean.User;
+import com.mysql.app.bean.Waste;
 import com.mysql.app.data.DBManger;
+import com.mysql.app.view.BottomDialog;
 import com.mysql.app.view.TitleView;
 
 import java.util.List;
@@ -34,8 +36,9 @@ public class WasteInformationActivity extends Activity{
     private TextView mUserTv;
     private EditText mCommentEd;
     private Button mSendBtn;
-
+    private BottomDialog mBottomDialog;
     private Handler mHandler = new Handler();
+    private Waste mWaste;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,11 @@ public class WasteInformationActivity extends Activity{
     }
 
     public void init(){
+
+        mWaste = (Waste) getIntent().getExtras().getSerializable("waste");
+
+        mBottomDialog = new BottomDialog(this);
+
         mTitleView = findViewById(R.id.title_view);
         mTitleView.setTitle("Waste Information");
         mTitleView.setOnBackListener(new View.OnClickListener() {
@@ -57,7 +65,7 @@ public class WasteInformationActivity extends Activity{
         mTitleView.setOtherBtn("regulate", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mBottomDialog.show();
             }
         });
         mEvaListView = findViewById(R.id.comments_listview);
@@ -68,6 +76,13 @@ public class WasteInformationActivity extends Activity{
         mUserTv = findViewById(R.id.user_tv);
         mCommentEd = findViewById(R.id.send_comments_ed);
         mSendBtn = findViewById(R.id.send_comments_btn);
+
+        mNameTv.setText(mWaste.getName());
+        mTypeTv.setText(mWaste.getType());
+        mDescriptionTv.setText(mWaste.getDescription());
+        mScoreTv.setText(mWaste.getScore());
+
+        mBottomDialog.setWaste(mWaste);
     }
 
     public void initData(){

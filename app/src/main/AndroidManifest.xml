@@ -25,6 +25,7 @@
         <activity android:name=".PostNewWasteActivity"></activity>
         <activity android:name=".PostedRecordActivity"></activity>
         <activity android:name=".WasteInformationActivity"></activity>
+        <activity android:name=".WasteEditActivity"></activity>
     </application>
 
 </manifest>
