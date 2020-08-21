@@ -32,26 +32,25 @@ public class WasteInformationActivity extends Activity{
     private TextView mNameTv;
     private TextView mTypeTv;
     private TextView mDescriptionTv;
+    private TextView mBarCodeTv;
     private TextView mScoreTv;
     private TextView mUserTv;
     private EditText mCommentEd;
     private Button mSendBtn;
     private BottomDialog mBottomDialog;
     private Handler mHandler = new Handler();
-    private Waste mWaste;
+    public static Waste mWaste;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waste_info);
+        mWaste = (Waste) getIntent().getExtras().getSerializable("waste");
         init();
         initData();
     }
 
     public void init(){
-
-        mWaste = (Waste) getIntent().getExtras().getSerializable("waste");
-
         mBottomDialog = new BottomDialog(this);
 
         mTitleView = findViewById(R.id.title_view);
@@ -73,6 +72,7 @@ public class WasteInformationActivity extends Activity{
         mTypeTv = findViewById(R.id.waste_type_tv);
         mDescriptionTv = findViewById(R.id.description_tv);
         mScoreTv = findViewById(R.id.score_tv);
+        mBarCodeTv = findViewById(R.id.waste_barcode_tv);
         mUserTv = findViewById(R.id.user_tv);
         mCommentEd = findViewById(R.id.send_comments_ed);
         mSendBtn = findViewById(R.id.send_comments_btn);
@@ -81,8 +81,16 @@ public class WasteInformationActivity extends Activity{
         mTypeTv.setText(mWaste.getType());
         mDescriptionTv.setText(mWaste.getDescription());
         mScoreTv.setText(mWaste.getScore());
+        mBarCodeTv.setText(mWaste.getBarCode());
 
         mBottomDialog.setWaste(mWaste);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        init();
+        initData();
     }
 
     public void initData(){

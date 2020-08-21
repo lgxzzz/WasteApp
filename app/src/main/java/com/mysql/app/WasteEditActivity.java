@@ -189,30 +189,29 @@ public class WasteEditActivity extends AppCompatActivity {
                     return;
                 }
                 mWaste.setType(mSelectType);
-                Toast.makeText(WasteEditActivity.this,"Successful post", Toast.LENGTH_LONG).show();
-                finish();
-//                DBManger.getInstance(WasteEditActivity.this).updateWaset(mWaste, new DBManger.IListener() {
-//                    @Override
-//                    public void onSuccess() {
-//                        mHandler.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Toast.makeText(WasteEditActivity.this,"Successful post", Toast.LENGTH_LONG).show();
-//                                finish();
-//                            }
-//                        });
-//                    }
-//
-//                    @Override
-//                    public void onError(String error) {
-//                        mHandler.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Toast.makeText(WasteEditActivity.this,error, Toast.LENGTH_LONG).show();
-//                            }
-//                        });
-//                    }
-//                });
+                DBManger.getInstance(WasteEditActivity.this).updateWaset(mWaste, new DBManger.IListener() {
+                    @Override
+                    public void onSuccess() {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(WasteEditActivity.this,"Successful post", Toast.LENGTH_LONG).show();
+                                WasteInformationActivity.mWaste = mWaste;
+                                finish();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(WasteEditActivity.this,error, Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                });
             }
         });
     }

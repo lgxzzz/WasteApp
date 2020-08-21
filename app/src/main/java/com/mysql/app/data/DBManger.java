@@ -24,8 +24,10 @@ public class DBManger {
     public User mUser;
     public static  DBManger instance;
 
-    private static final String REMOTE_IP = "10.0.2.2";
-    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/test_db";
+//    private static final String REMOTE_IP = "10.0.2.2";
+    private static final String REMOTE_IP = "192.168.1.173";
+    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/sys";
+//    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/test_db";
     private static final String USER = "root";
     private static final String PASSWORD = "lgx199010170012";
     private Connection conn;
@@ -287,7 +289,8 @@ public class DBManger {
             @Override
             public void run() {
                 // 插入数据的 sql 语句
-                String insert_user_sql = "insert into Waste (WASTE_ID, WASTE_NAME,WASTE_TYPE,WASTE_DES,USER_ID,WASTE_BARCODE,WASTE_SCORE,CREAT_TIME) values (?,?,?,?,?,?,?,?)";
+                //(WASTE_ID, WASTE_NAME,WASTE_TYPE,WASTE_DES,USER_ID,WASTE_BARCODE,WASTE_SCORE,CREAT_TIME) values (?,?,?,?,?,?,?,?)";
+                String insert_user_sql = "update Waste set WASTE_NAME = ?,WASTE_TYPE = ?, WASTE_DES = ?,WASTE_BARCODE = ?,WASTE_SCORE= ? where WASTE_ID = ?";
                 PreparedStatement ps = null;
                 if (conn == null) {
                     return;
@@ -296,14 +299,12 @@ public class DBManger {
                     ps = conn.prepareStatement(insert_user_sql);
                     String userid = getRandomUSER_ID();
                     // 为两个 ? 设置具体的值
-                    ps.setString(1, getRandomWaste_ID());
-                    ps.setString(2, waste.getName());
-                    ps.setString(3, waste.getType());
-                    ps.setString(4, waste.getDescription());
-                    ps.setString(5, mUser.getUserId());
-                    ps.setString(6, waste.getBarCode());
-                    ps.setString(7, waste.getScore());
-                    ps.setLong(8, System.currentTimeMillis());
+                    ps.setString(1, waste.getName());
+                    ps.setString(2, waste.getType());
+                    ps.setString(3, waste.getDescription());
+                    ps.setString(4, waste.getBarCode());
+                    ps.setString(5, waste.getScore());
+                    ps.setString(6, waste.getId());
                     // 执行语句
                     int x = ps.executeUpdate();
                     if (x!=-1){
