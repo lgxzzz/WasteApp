@@ -149,7 +149,7 @@ public class PostNewWasteActivity extends AppCompatActivity {
         mScanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivityForResult(new Intent(PostNewWasteActivity.this, ScanActivity.class), 1);
             }
         });
 
@@ -206,5 +206,15 @@ public class PostNewWasteActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==1){
+            String result = data.getExtras().getString("barcode");//得到新Activity 关闭后返回的数据
+            if (result.length()!=0)
+                mBarCodeEd.setText(result);
+        }
     }
 }

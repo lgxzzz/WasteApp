@@ -2,6 +2,7 @@ package com.mysql.app;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import cn.bingoogolapple.qrcode.core.QRCodeView;
@@ -18,6 +20,7 @@ import cn.bingoogolapple.qrcode.zxing.ZXingView;
 
 public class ScanActivity extends Activity {
     private QRCodeView mQRCodeView;
+    private Button mCancelBtn;
     private Activity activity;
 
     @Override
@@ -34,6 +37,7 @@ public class ScanActivity extends Activity {
 
 
         mQRCodeView = (ZXingView) findViewById(R.id.zxingview);
+        mCancelBtn = (Button) findViewById(R.id.cancel_btn);
         mQRCodeView.changeToScanBarcodeStyle(); //扫二维码
         mQRCodeView.setDelegate(new QRCodeView.Delegate() {
 
@@ -46,13 +50,23 @@ public class ScanActivity extends Activity {
                 //扫描得到结果震动一下表示
                 vibrate();
 
-                //获取结果后三秒后，重新开始扫描
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mQRCodeView.startSpot();
-                    }
-                }, 3000);
+//                //获取结果后三秒后，重新开始扫描
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mQRCodeView.startSpot();
+//                    }
+//                }, 3000);
+
+                //数据是使用Intent返回
+                Intent intent = new Intent();
+                //把返回数据存入Intent
+                intent.putExtra("barcode", result);
+                //设置返回数据
+                ScanActivity.this.setResult(RESULT_OK, intent);
+                //关闭Activity
+                ScanActivity.this.finish();
+
             }
 
             @Override
@@ -100,6 +114,18 @@ public class ScanActivity extends Activity {
 //                Toast.makeText(activity,"changeToScanQRCodeStyle",Toast.LENGTH_SHORT).show();
 //            }
 //        });
+        mCancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                //把返回数据存入Intent
+                intent.putExtra("barcode", "");
+                //设置返回数据
+                ScanActivity.this.setResult(RESULT_OK, intent);
+                //关闭Activity
+                ScanActivity.this.finish();
+            }
+        });
     }
 
     @Override
@@ -110,6 +136,19 @@ public class ScanActivity extends Activity {
         //mQRCodeView.startCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
 
         mQRCodeView.showScanRect(); //显示扫描方框
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //获取结果后三秒后，重新开始扫描
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mQRCodeView.startSpot();
+            }
+        }, 2000);
     }
 
     @Override

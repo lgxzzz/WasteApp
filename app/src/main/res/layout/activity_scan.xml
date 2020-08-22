@@ -42,27 +42,42 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="开始扫码" />
+            android:text="Scan"
+            android:visibility="gone"
+            />
 
         <Button
             android:id="@+id/stop_spot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="暂停扫码" />
+            android:text="暂停扫码"
+            android:visibility="gone"
+            />
 
         <Button
             android:id="@+id/open_flashlight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="开灯" />
+            android:text="开灯"
+            android:visibility="gone"
+            />
 
         <Button
             android:id="@+id/close_flashlight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="关灯" />
+            android:text="关灯"
+            android:visibility="gone"
+
+            />
+        <Button
+            android:id="@+id/cancel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Cancel" />
     </LinearLayout>
 </RelativeLayout>
