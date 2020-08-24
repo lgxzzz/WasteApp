@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.mysql.app.bean.Evaluation;
+import com.mysql.app.bean.SearchHis;
 import com.mysql.app.bean.User;
 import com.mysql.app.bean.Waste;
 
@@ -473,6 +474,69 @@ public class DBManger {
         }).start();
     }
 
+    //获取该用户的历史搜索关键字
+    public void getSearchHisByUser(User user,ISearchHisListener listener){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<SearchHis> searchHis = new ArrayList<>();
+                // 插入数据的 sql 语句
+                String sql = "select * from SearchHis where USER_ID = ?";
+                PreparedStatement ps = null;
+                if (conn == null) {
+                    return;
+                }
+                try {
+
+                    ResultSet rs = null;
+                    ps = conn.prepareStatement(sql);
+                    ps.setString(1, mUser.getUserId());
+                    // 执行语句
+                    rs = ps.executeQuery();
+                    if (rs!=null){
+                        // 展开结果集数据库
+                        while(rs.next()){
+                            // 通过字段检索
+                            String SEARCH_ID = rs.getString("SEARCH_ID");
+                            String USER_ID = rs.getString("WASTE_NAME");
+                            String SEARCH_KEY = rs.getString("WASTE_TYPE");
+                            long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
+
+                            SearchHis searchHis1 = new SearchHis();
+                            searchHis1.setUserId(mUser.getUserId());
+                            searchHis1.setId(SEARCH_ID);
+                            searchHis1.setSearchKey(SEARCH_KEY);
+                            searchHis1.setTime(CREAT_TIME);
+                            searchHis.add(searchHis1);
+                        }
+                        listener.onSuccess(searchHis);
+                    }
+
+//                    ps = conn.prepareStatement(sql);
+//                    ps.setString(1, user.getUserId());
+//                    // 执行语句
+//                    ResultSet rs = ps.executeQuery(sql);
+//
+//
+                    // 完成后关闭
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    listener.onError("");
+                } finally {
+                    if (ps != null) {
+                        try {
+                            ps.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
     String pattern = "yyyy-MM-dd HH:mm:ss";
     public static long getStringToDate(String dateString, String pattern) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
@@ -517,6 +581,11 @@ public class DBManger {
     };
     public interface IWasteListener{
         public void onSuccess(List<Waste> wastes);
+        public void onError(String error);
+    };
+
+    public interface ISearchHisListener{
+        public void onSuccess(List<SearchHis> searchHis);
         public void onError(String error);
     };
 

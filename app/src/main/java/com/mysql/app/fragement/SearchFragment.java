@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.mysql.app.R;
 
@@ -16,6 +17,8 @@ import com.mysql.app.R;
  *
  * */
 public class SearchFragment extends Fragment {
+
+    private EditText mSearchEd;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -36,7 +39,13 @@ public class SearchFragment extends Fragment {
     }
 
     public void initView(View view){
+        mSearchEd = view.findViewById(R.id.search_ed);
+        mSearchEd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+            }
+        });
     };
 
     public void initData() {

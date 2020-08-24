@@ -1,6 +1,7 @@
 package com.mysql.app.bean;
 
 public class SearchHis {
+    private String Id;
     private String UserId;
     private String SearchKey;
     private long Time;
@@ -27,5 +28,13 @@ public class SearchHis {
 
     public void setTime(long time) {
         Time = time;
+    }
+
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
     }
 }
