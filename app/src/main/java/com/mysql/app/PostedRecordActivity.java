@@ -38,7 +38,7 @@ public class PostedRecordActivity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_posted_record);
         initView();
-        initData();
+
     }
 
     public void initView(){
@@ -51,6 +51,12 @@ public class PostedRecordActivity extends Activity{
             }
         });
         mListView = findViewById(R.id.waste_posted_record_listview);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initData();
     }
 
     public void initData(){

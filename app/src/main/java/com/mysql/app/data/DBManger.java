@@ -327,6 +327,42 @@ public class DBManger {
         }).start();
     }
 
+    public void deleteWaset(Waste waste,IListener listener){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // 插入数据的 sql 语句
+                String insert_user_sql = "delete from Waste where WASTE_ID =?";
+                PreparedStatement ps = null;
+                if (conn == null) {
+                    return;
+                }
+                try {
+                    ps = conn.prepareStatement(insert_user_sql);
+                    // 为两个 ? 设置具体的值
+                    ps.setString(1, waste.getId());
+                    // 执行语句
+                    int x = ps.executeUpdate();
+                    if (x!=-1){
+                        listener.onSuccess();
+                    }else{
+                        listener.onError("delete waste fail！");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (ps != null) {
+                        try {
+                            ps.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
     public boolean isWasteExist(Waste waste){
         // 插入数据的 sql 语句
         String insert_user_sql = "select * from Waste where WASTE_ID = ?";

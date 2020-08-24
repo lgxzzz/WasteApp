@@ -14,6 +14,7 @@ import android.widget.Button;
 import com.mysql.app.R;
 import com.mysql.app.WasteEditActivity;
 import com.mysql.app.bean.Waste;
+import com.mysql.app.data.DBManger;
 
 public class BottomDialog extends Dialog {
     public Waste mWaste;
@@ -54,6 +55,21 @@ public class BottomDialog extends Dialog {
             @Override
             public void onClick(View view) {
 
+                DBManger.getInstance(getContext()).deleteWaset(mWaste, new DBManger.IListener() {
+                    @Override
+                    public void onSuccess() {
+                        if (listener!=null){
+                            listener.onDelete();
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        if (listener!=null){
+                            listener.onError(error);
+                        }
+                    }
+                });
             }
         });
     }
@@ -70,5 +86,17 @@ public class BottomDialog extends Dialog {
 
     public void setWaste(Waste mWaste){
         this.mWaste = mWaste;
+    }
+
+
+    IBottomDialogListener listener;
+    public interface IBottomDialogListener{
+        public void onDelete();
+        public void onError(String error);
+    }
+
+
+    public void setListener(IBottomDialogListener listener) {
+        this.listener = listener;
     }
 }

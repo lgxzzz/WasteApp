@@ -54,14 +54,14 @@ public class WasteInformationActivity extends Activity{
         mBottomDialog = new BottomDialog(this);
 
         mTitleView = findViewById(R.id.title_view);
-        mTitleView.setTitle("Waste Information");
+        mTitleView.setTitle("Posted Waste Information");
         mTitleView.setOnBackListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        mTitleView.setOtherBtn("regulate", new View.OnClickListener() {
+        mTitleView.setOtherBtn("Manage", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mBottomDialog.show();
@@ -84,6 +84,17 @@ public class WasteInformationActivity extends Activity{
         mBarCodeTv.setText(mWaste.getBarCode());
 
         mBottomDialog.setWaste(mWaste);
+        mBottomDialog.setListener(new BottomDialog.IBottomDialogListener() {
+            @Override
+            public void onDelete() {
+                WasteInformationActivity.this.finish();
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
     }
 
     @Override
@@ -117,4 +128,5 @@ public class WasteInformationActivity extends Activity{
             mScoreTv.setText(str);
         }
     }
+
 }

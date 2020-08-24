@@ -17,6 +17,13 @@ create table Waste
    WASTE_SCORE varchar(20),
    CREAT_TIME BIGINT
 );
+create table SearchHis
+(
+   SEARCH_ID varchar(20) primary key,
+   USER_ID varchar(20),
+   SEARCH_KEY varchar(20),
+   CREAT_TIME BIGINT
+);
 insert into User values('9787302164289','amon','123','123@qq.com',"Administrator");
 insert into User values('9787121060953','bob','456','456@361.com',"User");
 

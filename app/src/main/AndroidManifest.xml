@@ -18,7 +18,7 @@
         android:name=".MysqlApplication"
         android:theme="@style/AppTheme"
         >
-        <activity android:name=".CreateBarCodeActivity">
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,7 +33,7 @@
         <activity android:name=".PostedRecordActivity"></activity>
         <activity android:name=".WasteInformationActivity"></activity>
         <activity android:name=".WasteEditActivity"></activity>
-        <activity android:name=".SplashActivity"></activity>
+        <activity android:name=".CreateBarCodeActivity"></activity>
         <activity android:name=".ScanActivity"></activity>
     </application>
 

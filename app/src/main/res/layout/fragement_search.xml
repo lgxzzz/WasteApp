@@ -31,90 +31,125 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal"
-        android:background="@android:color/black"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/waste_type_layout"
+        android:visibility="gone"
         >
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textColor="@android:color/white"
-            android:text="Hazardous Waste"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:background="@android:color/black"
             android:layout_gravity="center"
-            android:textSize="20dp"
-            />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            />
-    </LinearLayout>
+            android:gravity="center"
+            >
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textColor="@android:color/white"
+                android:text="Hazardous Waste"
+                android:layout_gravity="center"
+                android:textSize="20dp"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="Hazardous waste refers to the domestic waste that causes direct or potential harm to human health and natural environment
+"           android:textColor="@android:color/white"
+                />
+        </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@android:color/darker_gray"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@android:color/darker_gray"
+            android:orientation="horizontal"
             android:layout_gravity="center"
-            android:layout_weight="2"
-            android:text="Recyclable Waste"
-            android:textColor="@android:color/white"
-            android:textSize="20dp" />
+            android:gravity="center"
+            >
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:text="Recyclable Waste"
+                android:textColor="@android:color/white"
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="Recyclable garbage refers to the domestic waste which is suitable for recycling and can be recycled
+"           android:textColor="@android:color/white"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:background="@android:color/holo_green_light"
+            android:layout_gravity="center"
+            android:gravity="center"
+            >
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textColor="@android:color/white"
+                android:text="Household Food Waste"
+                android:layout_gravity="center"
+                android:textSize="20dp"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="Wet waste is a kind of biomass waste which is easy to rot in daily life
+"
+                android:textColor="@android:color/white"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:background="@android:color/holo_red_light"
+            android:layout_gravity="center"
+            android:gravity="center"
+            >
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textColor="@android:color/white"
+                android:text="Residual Waste"
+                android:layout_gravity="center"
+                android:textSize="20dp"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="Dry waste is a category other than the above three types of waste
+"
+                android:textColor="@android:color/white"
+                />
+        </LinearLayout>
     </LinearLayout>
-    <LinearLayout
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal"
-        android:background="@android:color/holo_green_light"
+        android:layout_height="match_parent"
+        android:id="@+id/search_listview"
         >
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textColor="@android:color/white"
-            android:text="Household Food Waste"
-            android:layout_gravity="center"
-            android:textSize="20dp"
-            />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal"
-        android:background="@android:color/holo_red_light"
-        >
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textColor="@android:color/white"
-            android:text="Residual Waste"
-            android:layout_gravity="center"
-            android:textSize="20dp"
-            />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            />
-    </LinearLayout>
+
+    </ListView>
 </LinearLayout>
