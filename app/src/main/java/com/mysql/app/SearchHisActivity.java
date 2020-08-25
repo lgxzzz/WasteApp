@@ -96,16 +96,11 @@ public class SearchHisActivity extends Activity {
     }
 
     public void searchByKey(String key){
-        DBManger.getInstance(this).searchWasteByKeyWord(mUser, key, new DBManger.IWasteListener() {
-            @Override
-            public void onSuccess(List<Waste> wastes) {
-
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        });
+        Intent intent = new Intent(this,SearchDetailActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("searchkey",key);
+        bundle.putBoolean("isInsert",true);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

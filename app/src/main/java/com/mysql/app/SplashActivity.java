@@ -18,7 +18,8 @@ public class SplashActivity extends Activity {
             @Override
             public void run() {
                 try{
-                    Thread.sleep(2000);
+//                    Thread.sleep(2000);
+                    Thread.sleep(100);
 //                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                     startActivity(new Intent(SplashActivity.this, MainActivity.class));
                     finish();

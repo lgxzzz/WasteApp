@@ -24,7 +24,7 @@ import java.util.List;
  * 垃圾详细信息
  *
  * */
-public class WasteInformationActivity extends Activity{
+public class PostedRecordWasteDetailActivity extends Activity{
 
     private TitleView mTitleView;
     private ListView mEvaListView;
@@ -40,11 +40,13 @@ public class WasteInformationActivity extends Activity{
     private BottomDialog mBottomDialog;
     private Handler mHandler = new Handler();
     public static Waste mWaste;
+    public User mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_waste_info);
+        setContentView(R.layout.activity_post_new_waste_info);
+        mUser= DBManger.getInstance(this).mUser;
         mWaste = (Waste) getIntent().getExtras().getSerializable("waste");
         init();
         initData();
@@ -52,8 +54,17 @@ public class WasteInformationActivity extends Activity{
 
     public void init(){
         mBottomDialog = new BottomDialog(this);
-
         mTitleView = findViewById(R.id.title_view);
+        mEvaListView = findViewById(R.id.comments_listview);
+        mNameTv = findViewById(R.id.waste_name_tv);
+        mTypeTv = findViewById(R.id.waste_type_tv);
+        mDescriptionTv = findViewById(R.id.description_tv);
+        mScoreTv = findViewById(R.id.score_tv);
+        mBarCodeTv = findViewById(R.id.waste_barcode_tv);
+        mUserTv = findViewById(R.id.user_tv);
+        mCommentEd = findViewById(R.id.send_comments_ed);
+        mSendBtn = findViewById(R.id.send_comments_btn);
+
         mTitleView.setTitle("Posted Waste Information");
         mTitleView.setOnBackListener(new View.OnClickListener() {
             @Override
@@ -67,15 +78,6 @@ public class WasteInformationActivity extends Activity{
                 mBottomDialog.show();
             }
         });
-        mEvaListView = findViewById(R.id.comments_listview);
-        mNameTv = findViewById(R.id.waste_name_tv);
-        mTypeTv = findViewById(R.id.waste_type_tv);
-        mDescriptionTv = findViewById(R.id.description_tv);
-        mScoreTv = findViewById(R.id.score_tv);
-        mBarCodeTv = findViewById(R.id.waste_barcode_tv);
-        mUserTv = findViewById(R.id.user_tv);
-        mCommentEd = findViewById(R.id.send_comments_ed);
-        mSendBtn = findViewById(R.id.send_comments_btn);
 
         mNameTv.setText(mWaste.getName());
         mTypeTv.setText(mWaste.getType());
@@ -87,7 +89,7 @@ public class WasteInformationActivity extends Activity{
         mBottomDialog.setListener(new BottomDialog.IBottomDialogListener() {
             @Override
             public void onDelete() {
-                WasteInformationActivity.this.finish();
+                PostedRecordWasteDetailActivity.this.finish();
             }
 
             @Override
@@ -100,33 +102,31 @@ public class WasteInformationActivity extends Activity{
     @Override
     protected void onResume() {
         super.onResume();
-        init();
         initData();
     }
 
     public void initData(){
-        User user  = DBManger.getInstance(this).mUser;
-        List<Evaluation> evaluations = DBManger.getInstance(this).queryEvaluations(user);
-        if (evaluations==null){
-            return;
-        }
-        mAdapter = new EvaAdapter(this,evaluations);
-        mEvaListView.setAdapter(mAdapter);
+        List<Evaluation> evaluations = DBManger.getInstance(this).queryEvaluations(mUser);
+        if (evaluations!=null){
+            mAdapter = new EvaAdapter(this,evaluations);
+            mEvaListView.setAdapter(mAdapter);
 
-        Float allScore = 0.0f;
-        for (int i=0;i<evaluations.size();i++){
-            String score = evaluations.get(i).getEva_score();
-            Float sc = Float.parseFloat(score);
-            allScore= allScore+sc;
+            Float allScore = 0.0f;
+            for (int i=0;i<evaluations.size();i++){
+                String score = evaluations.get(i).getEva_score();
+                Float sc = Float.parseFloat(score);
+                allScore= allScore+sc;
+            }
+            if (allScore!=0.0f)
+            {
+                //计算评价得分
+                double sroce = allScore/evaluations.size();
+                java.text.DecimalFormat myformat=new java.text.DecimalFormat("0.0");
+                String str = myformat.format(sroce);
+                mScoreTv.setText(str);
+            }
         }
-        if (allScore!=0.0f)
-        {
-            //计算评价得分
-            double sroce = allScore/evaluations.size();
-            java.text.DecimalFormat myformat=new java.text.DecimalFormat("0.0");
-            String str = myformat.format(sroce);
-            mScoreTv.setText(str);
-        }
+
     }
 
 }

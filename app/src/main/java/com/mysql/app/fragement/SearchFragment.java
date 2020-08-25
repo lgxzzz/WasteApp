@@ -43,6 +43,7 @@ public class SearchFragment extends Fragment {
 
     public void initView(View view){
         mSearchEd = view.findViewById(R.id.search_ed);
+        mSearchEd.setFocusable(false);
         mSearchEd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -2,11 +2,11 @@ package com.mysql.app;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.ListView;
 
 import com.mysql.app.adapter.PostNewWasteAdapter;
+import com.mysql.app.adapter.SearchWasteAdapter;
 import com.mysql.app.bean.User;
 import com.mysql.app.bean.Waste;
 import com.mysql.app.data.DBManger;
@@ -14,36 +14,20 @@ import com.mysql.app.view.TitleView;
 
 import java.util.List;
 
-
-/***
- * 查看发布列表
- *
- * */
-public class PostedRecordActivity extends Activity{
-
+public class SearchDetailActivity extends Activity {
     private TitleView mTitleView;
+    private SearchWasteAdapter mAdapter;
     private ListView mListView;
-    private PostNewWasteAdapter mAdapter;
-    private Handler mHandler = new Handler();
+    private List<Waste> mWastes;
+    private User mUser;
+    private String mKey;
+    private boolean mIsInsert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_posted_record);
+        setContentView(R.layout.activity_search_waste_detail);
         initView();
-
-    }
-
-    public void initView(){
-        mTitleView = findViewById(R.id.title_view);
-        mTitleView.setTitle("Posted Record");
-        mTitleView.setOnBackListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        mListView = findViewById(R.id.waste_posted_record_listview);
     }
 
     @Override
@@ -52,15 +36,34 @@ public class PostedRecordActivity extends Activity{
         initData();
     }
 
+    public void initView(){
+        mTitleView = findViewById(R.id.title_view);
+        mTitleView.setTitle("Result");
+        mTitleView.setOnBackListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mListView = findViewById(R.id.waste_search_result_listview);
+    }
+
     public void initData(){
-        User user = DBManger.getInstance(this).mUser;
-         DBManger.getInstance(this).getWastesByUser(user, new DBManger.IWasteListener() {
+        mUser = DBManger.getInstance(this).mUser;
+        mKey = getIntent().getExtras().getString("searchkey");
+        mIsInsert = getIntent().getExtras().getBoolean("isInsert");
+        searchByKey();
+    }
+
+    public void searchByKey(){
+        DBManger.getInstance(this).searchWasteByKeyWord(mUser, mKey, mIsInsert,new DBManger.IWasteListener() {
             @Override
             public void onSuccess(List<Waste> wastes) {
-                mHandler.post(new Runnable() {
+                mWastes = wastes;
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mAdapter = new PostNewWasteAdapter(PostedRecordActivity.this,wastes);
+                        mAdapter = new SearchWasteAdapter(SearchDetailActivity.this,wastes);
                         mListView.setAdapter(mAdapter);
                     }
                 });
@@ -71,6 +74,5 @@ public class PostedRecordActivity extends Activity{
 
             }
         });
-
     }
 }

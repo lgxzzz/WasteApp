@@ -31,11 +31,13 @@
         <activity android:name=".UpdateActivity"></activity>
         <activity android:name=".PostNewWasteActivity"></activity>
         <activity android:name=".PostedRecordActivity"></activity>
-        <activity android:name=".WasteInformationActivity"></activity>
+        <activity android:name=".PostedRecordWasteDetailActivity"></activity>
         <activity android:name=".WasteEditActivity"></activity>
         <activity android:name=".CreateBarCodeActivity"></activity>
         <activity android:name=".ScanActivity"></activity>
         <activity android:name=".SearchHisActivity"></activity>
+        <activity android:name=".SearchDetailActivity"></activity>
+        <activity android:name=".SearchWasteDetailActivity"></activity>
     </application>
 
 </manifest>

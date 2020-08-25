@@ -1,8 +1,6 @@
 package com.mysql.app.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.mysql.app.R;
-import com.mysql.app.WasteInformationActivity;
 import com.mysql.app.bean.Evaluation;
-import com.mysql.app.bean.Waste;
-import com.mysql.app.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +65,7 @@ public class EvaAdapter extends BaseAdapter {
 //        view.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                Intent intent = new Intent(mContext, WasteInformationActivity.class);
+//                Intent intent = new Intent(mContext, PostedRecordWasteDetailActivity.class);
 //                Bundle bundle = new Bundle();
 //                bundle.putSerializable("DATA", msgInfo);
 //                intent.putExtras(bundle);

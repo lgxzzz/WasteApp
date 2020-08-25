@@ -27,9 +27,9 @@ public class DBManger {
     public static  DBManger instance;
 
 //    private static final String REMOTE_IP = "10.0.2.2";
-    private static final String REMOTE_IP = "192.168.1.101";
-//    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/sys";
-    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/test_db";
+    private static final String REMOTE_IP = "192.168.1.173";
+    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/sys";
+//    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/test_db";
     private static final String USER = "root";
     private static final String PASSWORD = "lgx199010170012";
     private Connection conn;
@@ -531,58 +531,70 @@ public class DBManger {
     }
 
     //根据关键字搜索垃圾，如果不是游客，则添加该搜索关键字记录
-    public void searchWasteByKeyWord(User user,String key,IWasteListener listener){
+    public void searchWasteByKeyWord(User user,String key,boolean isInsert,IWasteListener listener){
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                insertSearchHis(user,key);
+                if (isInsert){
+                    insertSearchHis(user,key);
+                }
+                List<Waste> wastes = new ArrayList<>();
+                // 插入数据的 sql 语句
+                String sql = "select * from Waste where WASTE_NAME like ? or WASTE_TYPE like ? or WASTE_DES like ?";
+                PreparedStatement ps = null;
+                if (conn == null) {
+                    return;
+                }
+                try {
 
-//                List<Waste> wastes = new ArrayList<>();
-//                // 插入数据的 sql 语句
-//                String sql = "select * from SearchHis where USER_ID = ?";
-//                PreparedStatement ps = null;
-//                if (conn == null) {
-//                    return;
-//                }
-//                try {
-//
-//                    ResultSet rs = null;
-//                    ps = conn.prepareStatement(sql);
-//                    ps.setString(1, mUser.getUserId());
-//                    // 执行语句
-//                    rs = ps.executeQuery();
-//                    if (rs!=null){
-//                        // 展开结果集数据库
-//                        while(rs.next()){
-//                            // 通过字段检索
-//                            String SEARCH_ID = rs.getString("SEARCH_ID");
-//                            String USER_ID = rs.getString("WASTE_NAME");
-//                            String SEARCH_KEY = rs.getString("WASTE_TYPE");
-//                            long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
-//
-//                            SearchHis searchHis1 = new SearchHis();
-//                            searchHis1.setUserId(mUser.getUserId());
-//                            searchHis1.setId(SEARCH_ID);
-//                            searchHis1.setSearchKey(SEARCH_KEY);
-//                            searchHis1.setTime(CREAT_TIME);
-//                            searchHis.add(searchHis1);
-//                        }
-//                        listener.onSuccess(searchHis);
-//                    }
-//                    rs.close();
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                    listener.onError("");
-//                } finally {
-//                    if (ps != null) {
-//                        try {
-//                            ps.close();
-//                        } catch (SQLException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
+                    ResultSet rs = null;
+                    ps = conn.prepareStatement(sql);
+                    ps.setString(1, "%"+key+"%");
+                    ps.setString(2, "%"+key+"%");
+                    ps.setString(3, "%"+key+"%");
+                    // 执行语句
+                    rs = ps.executeQuery();
+                    if (rs!=null){
+                        // 展开结果集数据库
+                        while(rs.next()){
+                            // 通过字段检索
+                            String WASTE_ID = rs.getString("WASTE_ID");
+                            String WASTE_NAME = rs.getString("WASTE_NAME");
+                            String WASTE_TYPE = rs.getString("WASTE_TYPE");
+                            String WASTE_DES = rs.getString("WASTE_DES");
+                            String USER_ID = rs.getString("USER_ID");
+                            String WASTE_BARCODE = rs.getString("WASTE_BARCODE");
+                            String WASTE_SCORE = rs.getString("WASTE_SCORE");
+                            long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
+
+                            Waste waste = new Waste();
+                            waste.setId(WASTE_ID);
+                            waste.setName(WASTE_NAME);
+                            waste.setType(WASTE_TYPE);
+                            waste.setDescription(WASTE_DES);
+                            waste.setUserId(USER_ID);
+                            waste.setBarCode(WASTE_BARCODE);
+                            waste.setScore(WASTE_SCORE);
+                            waste.setTime(CREAT_TIME);
+                            wastes.add(waste);
+                        }
+                        listener.onSuccess(wastes);
+                    }
+                    // 完成后关闭
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    listener.onError("");
+                } finally {
+                    if (ps != null) {
+                        try {
+                            ps.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
         }).start();
     }

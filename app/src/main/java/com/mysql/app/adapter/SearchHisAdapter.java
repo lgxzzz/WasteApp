@@ -10,8 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.mysql.app.R;
-import com.mysql.app.WasteInformationActivity;
-import com.mysql.app.bean.Evaluation;
+import com.mysql.app.SearchDetailActivity;
 import com.mysql.app.bean.SearchHis;
 
 import java.util.ArrayList;
@@ -63,9 +62,10 @@ public class SearchHisAdapter extends BaseAdapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, WasteInformationActivity.class);
+                Intent intent = new Intent(mContext, SearchDetailActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("DATA", msgInfo);
+                bundle.putString("searchkey",msgInfo.getSearchKey());
+                bundle.putBoolean("isInsert",false);
                 intent.putExtras(bundle);
                 mContext.startActivity(intent);
             }
