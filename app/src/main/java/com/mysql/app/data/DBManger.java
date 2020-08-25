@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.mysql.app.bean.Evaluation;
 import com.mysql.app.bean.SearchHis;
@@ -26,7 +27,7 @@ public class DBManger {
     public static  DBManger instance;
 
 //    private static final String REMOTE_IP = "10.0.2.2";
-    private static final String REMOTE_IP = "192.168.1.100";
+    private static final String REMOTE_IP = "192.168.1.101";
 //    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/sys";
     private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/test_db";
     private static final String USER = "root";
@@ -491,7 +492,7 @@ public class DBManger {
 
                     ResultSet rs = null;
                     ps = conn.prepareStatement(sql);
-                    ps.setString(1, mUser.getUserId());
+                    ps.setString(1, user.getUserId());
                     // 执行语句
                     rs = ps.executeQuery();
                     if (rs!=null){
@@ -499,12 +500,12 @@ public class DBManger {
                         while(rs.next()){
                             // 通过字段检索
                             String SEARCH_ID = rs.getString("SEARCH_ID");
-                            String USER_ID = rs.getString("WASTE_NAME");
-                            String SEARCH_KEY = rs.getString("WASTE_TYPE");
+                            String USER_ID = rs.getString("USER_ID");
+                            String SEARCH_KEY = rs.getString("SEARCH_KEY");
                             long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
 
                             SearchHis searchHis1 = new SearchHis();
-                            searchHis1.setUserId(mUser.getUserId());
+                            searchHis1.setUserId(user.getUserId());
                             searchHis1.setId(SEARCH_ID);
                             searchHis1.setSearchKey(SEARCH_KEY);
                             searchHis1.setTime(CREAT_TIME);
@@ -512,14 +513,6 @@ public class DBManger {
                         }
                         listener.onSuccess(searchHis);
                     }
-
-//                    ps = conn.prepareStatement(sql);
-//                    ps.setString(1, user.getUserId());
-//                    // 执行语句
-//                    ResultSet rs = ps.executeQuery(sql);
-//
-//
-                    // 完成后关闭
                     rs.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -536,6 +529,102 @@ public class DBManger {
             }
         }).start();
     }
+
+    //根据关键字搜索垃圾，如果不是游客，则添加该搜索关键字记录
+    public void searchWasteByKeyWord(User user,String key,IWasteListener listener){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                insertSearchHis(user,key);
+
+//                List<Waste> wastes = new ArrayList<>();
+//                // 插入数据的 sql 语句
+//                String sql = "select * from SearchHis where USER_ID = ?";
+//                PreparedStatement ps = null;
+//                if (conn == null) {
+//                    return;
+//                }
+//                try {
+//
+//                    ResultSet rs = null;
+//                    ps = conn.prepareStatement(sql);
+//                    ps.setString(1, mUser.getUserId());
+//                    // 执行语句
+//                    rs = ps.executeQuery();
+//                    if (rs!=null){
+//                        // 展开结果集数据库
+//                        while(rs.next()){
+//                            // 通过字段检索
+//                            String SEARCH_ID = rs.getString("SEARCH_ID");
+//                            String USER_ID = rs.getString("WASTE_NAME");
+//                            String SEARCH_KEY = rs.getString("WASTE_TYPE");
+//                            long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
+//
+//                            SearchHis searchHis1 = new SearchHis();
+//                            searchHis1.setUserId(mUser.getUserId());
+//                            searchHis1.setId(SEARCH_ID);
+//                            searchHis1.setSearchKey(SEARCH_KEY);
+//                            searchHis1.setTime(CREAT_TIME);
+//                            searchHis.add(searchHis1);
+//                        }
+//                        listener.onSuccess(searchHis);
+//                    }
+//                    rs.close();
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                    listener.onError("");
+//                } finally {
+//                    if (ps != null) {
+//                        try {
+//                            ps.close();
+//                        } catch (SQLException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+            }
+        }).start();
+    }
+
+    //添加搜索历史关键字
+    public void insertSearchHis(User user,String key){
+        if(user!=null){
+            // 插入数据的 sql 语句
+            String insert_sql = "insert into SearchHis (SEARCH_ID,USER_ID, SEARCH_KEY,CREAT_TIME) values (?,?,?,?)";
+            PreparedStatement ps = null;
+            if (conn == null) {
+                return;
+            }
+            try {
+                ps = conn.prepareStatement(insert_sql);
+                String search_id = getRandomSEARCH_ID();
+                // 为两个 ? 设置具体的值
+                ps.setString(1, search_id);
+                ps.setString(2, user.getUserId());
+                ps.setString(3, key);
+                ps.setLong(4, System.currentTimeMillis());
+                int x = ps.executeUpdate();
+                if (x!=-1){
+                    Log.e("lgx","insert searchhis sucess");
+                }else{
+                    Log.e("lgx","insert searchhis fail");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (ps != null) {
+                    try {
+                        ps.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    };
+
+
 
     String pattern = "yyyy-MM-dd HH:mm:ss";
     public static long getStringToDate(String dateString, String pattern) {
@@ -575,6 +664,16 @@ public class DBManger {
         }
         return strRand;
     }
+
+    //生成随机userid
+    public String getRandomSEARCH_ID(){
+        String strRand="S" ;
+        for(int i=0;i<10;i++){
+            strRand += String.valueOf((int)(Math.random() * 10)) ;
+        }
+        return strRand;
+    }
+
     public interface IListener{
         public void onSuccess();
         public void onError(String error);

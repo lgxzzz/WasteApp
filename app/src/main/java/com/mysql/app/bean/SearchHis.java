@@ -1,6 +1,8 @@
 package com.mysql.app.bean;
 
-public class SearchHis {
+import java.io.Serializable;
+
+public class SearchHis implements Serializable{
     private String Id;
     private String UserId;
     private String SearchKey;

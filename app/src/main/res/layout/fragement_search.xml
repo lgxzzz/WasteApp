@@ -35,7 +35,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:id="@+id/waste_type_layout"
-        android:visibility="gone"
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -146,11 +145,5 @@
                 />
         </LinearLayout>
     </LinearLayout>
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/search_listview"
-        >
 
-    </ListView>
 </LinearLayout>

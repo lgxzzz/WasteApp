@@ -1,5 +1,6 @@
 package com.mysql.app.fragement;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,7 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.mysql.app.LoginActivity;
 import com.mysql.app.R;
+import com.mysql.app.SearchHisActivity;
 
 
 /***
@@ -43,7 +46,7 @@ public class SearchFragment extends Fragment {
         mSearchEd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(getContext(), SearchHisActivity.class));
             }
         });
     };

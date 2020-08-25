@@ -3,12 +3,16 @@ package com.mysql.app;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import com.mysql.app.adapter.SearchHisAdapter;
 import com.mysql.app.bean.SearchHis;
+import com.mysql.app.bean.User;
+import com.mysql.app.bean.Waste;
 import com.mysql.app.data.DBManger;
 
 import java.util.List;
@@ -20,7 +24,8 @@ public class SearchHisActivity extends Activity {
     EditText mSearchEd;
     SearchHisAdapter mAdapter;
     ListView mListView;
-
+    List<SearchHis> mSearchHis;
+    User mUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,16 +40,72 @@ public class SearchHisActivity extends Activity {
     }
 
     public void initView(){
-        mCancelBtn = findViewById(R.id.cancel_btn);
+        mCancelBtn = findViewById(R.id.back_btn);
         mSearchBtn = findViewById(R.id.search_btn);
         mSearchEd = findViewById(R.id.search_ed);
         mListView = findViewById(R.id.search_his_listview);
 
+        mCancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        mSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String key = mSearchEd.getText().toString();
+                if (key!=null&&key.length()>0){
+                    searchByKey(key);
+                }
+            }
+        });
+
     }
 
     public void initData(){
-        DBManger.getInstance(this).getSearchHisByUser();
+        mUser = DBManger.getInstance(this).mUser;
+        DBManger.getInstance(this).getSearchHisByUser(mUser, new DBManger.ISearchHisListener() {
+            @Override
+            public void onSuccess(List<SearchHis> searchHis) {
+                if (searchHis!=null&&searchHis.size()>0){
+                    mSearchHis = searchHis;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAdapter = new SearchHisAdapter(SearchHisActivity.this,searchHis);
+                            mListView.setAdapter(mAdapter);
+                            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                    String key = mSearchHis.get(i).getSearchKey();
+                                    searchByKey(key);
+                                }
+                            });
+                        }
+                    });
+                }
+            }
 
-        List<SearchHis> mSearchHis =
+            @Override
+            public void onError(String error) {
+
+            }
+        });
+    }
+
+    public void searchByKey(String key){
+        DBManger.getInstance(this).searchWasteByKeyWord(mUser, key, new DBManger.IWasteListener() {
+            @Override
+            public void onSuccess(List<Waste> wastes) {
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
     }
 }
