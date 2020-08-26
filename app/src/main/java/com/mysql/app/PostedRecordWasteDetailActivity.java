@@ -14,7 +14,7 @@ import com.mysql.app.bean.Evaluation;
 import com.mysql.app.bean.User;
 import com.mysql.app.bean.Waste;
 import com.mysql.app.data.DBManger;
-import com.mysql.app.view.BottomDialog;
+import com.mysql.app.view.UserDialog;
 import com.mysql.app.view.TitleView;
 
 import java.util.List;
@@ -37,7 +37,7 @@ public class PostedRecordWasteDetailActivity extends Activity{
     private TextView mUserTv;
     private EditText mCommentEd;
     private Button mSendBtn;
-    private BottomDialog mBottomDialog;
+    private UserDialog mUserDialog;
     private Handler mHandler = new Handler();
     public static Waste mWaste;
     public User mUser;
@@ -53,7 +53,7 @@ public class PostedRecordWasteDetailActivity extends Activity{
     }
 
     public void init(){
-        mBottomDialog = new BottomDialog(this);
+        mUserDialog = new UserDialog(this);
         mTitleView = findViewById(R.id.title_view);
         mEvaListView = findViewById(R.id.comments_listview);
         mNameTv = findViewById(R.id.waste_name_tv);
@@ -75,7 +75,7 @@ public class PostedRecordWasteDetailActivity extends Activity{
         mTitleView.setOtherBtn("Manage", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBottomDialog.show();
+                mUserDialog.show();
             }
         });
 
@@ -85,8 +85,8 @@ public class PostedRecordWasteDetailActivity extends Activity{
         mScoreTv.setText(mWaste.getScore());
         mBarCodeTv.setText(mWaste.getBarCode());
 
-        mBottomDialog.setWaste(mWaste);
-        mBottomDialog.setListener(new BottomDialog.IBottomDialogListener() {
+        mUserDialog.setWaste(mWaste);
+        mUserDialog.setListener(new UserDialog.IBottomDialogListener() {
             @Override
             public void onDelete() {
                 PostedRecordWasteDetailActivity.this.finish();
@@ -106,26 +106,27 @@ public class PostedRecordWasteDetailActivity extends Activity{
     }
 
     public void initData(){
-        List<Evaluation> evaluations = DBManger.getInstance(this).queryEvaluations(mUser);
-        if (evaluations!=null){
-            mAdapter = new EvaAdapter(this,evaluations);
-            mEvaListView.setAdapter(mAdapter);
+        DBManger.getInstance(this).queryEvaluations(mWaste, new DBManger.IEvaListener() {
+            @Override
+            public void onSuccess(List<Evaluation> evaluations) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (evaluations!=null){
+                            mAdapter = new EvaAdapter(PostedRecordWasteDetailActivity.this,evaluations);
+                            mEvaListView.setAdapter(mAdapter);
 
-            Float allScore = 0.0f;
-            for (int i=0;i<evaluations.size();i++){
-                String score = evaluations.get(i).getEva_score();
-                Float sc = Float.parseFloat(score);
-                allScore= allScore+sc;
+                        }
+                    }
+                });
             }
-            if (allScore!=0.0f)
-            {
-                //计算评价得分
-                double sroce = allScore/evaluations.size();
-                java.text.DecimalFormat myformat=new java.text.DecimalFormat("0.0");
-                String str = myformat.format(sroce);
-                mScoreTv.setText(str);
+
+            @Override
+            public void onError(String error) {
+
             }
-        }
+        });
+
 
     }
 

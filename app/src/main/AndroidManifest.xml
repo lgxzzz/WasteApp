@@ -36,7 +36,7 @@
         <activity android:name=".CreateBarCodeActivity"></activity>
         <activity android:name=".ScanActivity"></activity>
         <activity android:name=".SearchHisActivity"></activity>
-        <activity android:name=".SearchDetailActivity"></activity>
+        <activity android:name=".SearchResultActivity"></activity>
         <activity android:name=".SearchWasteDetailActivity"></activity>
     </application>
 

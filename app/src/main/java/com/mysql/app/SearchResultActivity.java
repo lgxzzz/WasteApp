@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 
-import com.mysql.app.adapter.PostNewWasteAdapter;
 import com.mysql.app.adapter.SearchWasteAdapter;
 import com.mysql.app.bean.User;
 import com.mysql.app.bean.Waste;
@@ -14,7 +13,7 @@ import com.mysql.app.view.TitleView;
 
 import java.util.List;
 
-public class SearchDetailActivity extends Activity {
+public class SearchResultActivity extends Activity {
     private TitleView mTitleView;
     private SearchWasteAdapter mAdapter;
     private ListView mListView;
@@ -26,7 +25,7 @@ public class SearchDetailActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_waste_detail);
+        setContentView(R.layout.activity_search_result);
         initView();
     }
 
@@ -63,7 +62,7 @@ public class SearchDetailActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mAdapter = new SearchWasteAdapter(SearchDetailActivity.this,wastes);
+                        mAdapter = new SearchWasteAdapter(SearchResultActivity.this,wastes);
                         mListView.setAdapter(mAdapter);
                     }
                 });

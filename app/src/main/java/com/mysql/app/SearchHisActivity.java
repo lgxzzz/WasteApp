@@ -12,7 +12,6 @@ import android.widget.ListView;
 import com.mysql.app.adapter.SearchHisAdapter;
 import com.mysql.app.bean.SearchHis;
 import com.mysql.app.bean.User;
-import com.mysql.app.bean.Waste;
 import com.mysql.app.data.DBManger;
 
 import java.util.List;
@@ -96,7 +95,7 @@ public class SearchHisActivity extends Activity {
     }
 
     public void searchByKey(String key){
-        Intent intent = new Intent(this,SearchDetailActivity.class);
+        Intent intent = new Intent(this, SearchResultActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("searchkey",key);
         bundle.putBoolean("isInsert",true);

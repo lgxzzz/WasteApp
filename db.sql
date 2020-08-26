@@ -29,6 +29,7 @@ create table Evaluation
    EVA_ID varchar(20) primary key,
    WASTE_ID varchar(20),
    USER_ID varchar(20),
+   EVA_VAlUE varchar(200),
    CREAT_TIME BIGINT
 );
 create table Score

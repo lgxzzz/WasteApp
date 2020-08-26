@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.mysql.app.R;
 import com.mysql.app.bean.Evaluation;
+import com.mysql.app.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,35 +50,25 @@ public class EvaAdapter extends BaseAdapter {
         EvaAdapter.ViewHoler holer = null;
         if (view == null){
             holer = new EvaAdapter.ViewHoler();
-            view = LayoutInflater.from(mContext).inflate(R.layout.posted_record_item,null);
-            holer.mName = (TextView) view.findViewById(R.id.waste_name_tv);
-            holer.mType = (TextView) view.findViewById(R.id.waste_name_tv);
-            holer.mScore = (TextView) view.findViewById(R.id.waste_name_tv);
-            holer.mTime = (TextView) view.findViewById(R.id.waste_name_tv);
+            view = LayoutInflater.from(mContext).inflate(R.layout.comment_item,null);
+            holer.mName = (TextView) view.findViewById(R.id.username_tv);
+            holer.mComment = (TextView) view.findViewById(R.id.comment_tv);
+            holer.mScore = (TextView) view.findViewById(R.id.score_tv);
+            holer.mTime = (TextView) view.findViewById(R.id.comment_time_tv);
             view.setTag(holer);
         }else{
             holer = (EvaAdapter.ViewHoler) view.getTag();
         }
-//        holer.mName.setText(msgInfo.getName());
-//        holer.mType.setText(msgInfo.getType());
-//        holer.mScore.setText(msgInfo.getScore());
-//        holer.mTime.setText(DateUtil.parseTime(msgInfo.getTime()));
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(mContext, PostedRecordWasteDetailActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putSerializable("DATA", msgInfo);
-//                intent.putExtras(bundle);
-//                mContext.startActivity(intent);
-//            }
-//        });
+        holer.mName.setText(msgInfo.getmUser().getUserName());
+        holer.mComment.setText(msgInfo.getComment());
+        holer.mScore.setText(msgInfo.getmScore().getScore());
+        holer.mTime.setText(DateUtil.parseTime(msgInfo.getTime()));
         return view;
     }
 
     class ViewHoler{
         TextView mName;
-        TextView mType;
+        TextView mComment;
         TextView mTime;
         TextView mScore;
     }

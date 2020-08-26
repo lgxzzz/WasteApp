@@ -8,14 +8,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mysql.app.adapter.EvaAdapter;
 import com.mysql.app.bean.Evaluation;
+import com.mysql.app.bean.Score;
 import com.mysql.app.bean.User;
 import com.mysql.app.bean.Waste;
 import com.mysql.app.data.DBManger;
-import com.mysql.app.view.BottomDialog;
+import com.mysql.app.view.AdminDialog;
+import com.mysql.app.view.UserDialog;
 import com.mysql.app.view.TitleView;
 
 import java.util.List;
@@ -38,11 +42,12 @@ public class SearchWasteDetailActivity extends Activity{
     private TextView mUserTv;
     private EditText mCommentEd;
     private Button mSendBtn;
-    private BottomDialog mBottomDialog;
+    private AdminDialog mAdminDialog;
     private Handler mHandler = new Handler();
     public static Waste mWaste;
     public User mUser;
     public RatingBar mRatingBar;
+    public String mCurrentScore = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +60,7 @@ public class SearchWasteDetailActivity extends Activity{
     }
 
     public void init(){
-        mBottomDialog = new BottomDialog(this);
+        mAdminDialog = new AdminDialog(this);
         mTitleView = findViewById(R.id.title_view);
         mEvaListView = findViewById(R.id.comments_listview);
         mNameTv = findViewById(R.id.waste_name_tv);
@@ -89,19 +94,68 @@ public class SearchWasteDetailActivity extends Activity{
         }else if(mUser.getRole().equals("User")){
             //用户
             mTitleView.setOtherBtnVisible(false);
+            //判断是否该垃圾的发布的用户,是则不能评价
+            if(mUser.getUserId().equals(mWaste.getUserId())){
+                mCommentEd.setFocusable(false);
+
+            }else{
+                mSendBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String comment = mCommentEd.getText().toString();
+                        if (comment.length()!=0){
+                            sendComment(comment);
+
+
+                        }
+                    }
+                });
+            }
+
         }else if(mUser.getRole().equals("Administrator")){
             //管理员
             mTitleView.setOtherBtn("Delete", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mBottomDialog.show();
+                    mAdminDialog.show();
+                }
+            });
+
+            mAdminDialog.setWaste(mWaste);
+            mAdminDialog.setListener(new AdminDialog.IAdminDialogListener() {
+                @Override
+                public void onDelete() {
+                    SearchWasteDetailActivity.this.finish();
+                }
+
+                @Override
+                public void onError(String error) {
+
+                }
+            });
+
+            mSendBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String comment = mCommentEd.getText().toString();
+                    if (comment.length()!=0){
+                        sendComment(comment);
+                    }
                 }
             });
         }
+
         mTitleView.setOnBackListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        mRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                    updateRateValue(rating+"");
             }
         });
 
@@ -111,18 +165,6 @@ public class SearchWasteDetailActivity extends Activity{
         mScoreTv.setText(mWaste.getScore());
         mBarCodeTv.setText(mWaste.getBarCode());
 
-        mBottomDialog.setWaste(mWaste);
-        mBottomDialog.setListener(new BottomDialog.IBottomDialogListener() {
-            @Override
-            public void onDelete() {
-                SearchWasteDetailActivity.this.finish();
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        });
     }
 
     @Override
@@ -132,27 +174,116 @@ public class SearchWasteDetailActivity extends Activity{
     }
 
     public void initData(){
-        List<Evaluation> evaluations = DBManger.getInstance(this).queryEvaluations(mUser);
-        if (evaluations!=null){
-            mAdapter = new EvaAdapter(this,evaluations);
-            mEvaListView.setAdapter(mAdapter);
-
-            Float allScore = 0.0f;
-            for (int i=0;i<evaluations.size();i++){
-                String score = evaluations.get(i).getEva_score();
-                Float sc = Float.parseFloat(score);
-                allScore= allScore+sc;
-            }
-            if (allScore!=0.0f)
-            {
-                //计算评价得分
-                double sroce = allScore/evaluations.size();
-                java.text.DecimalFormat myformat=new java.text.DecimalFormat("0.0");
-                String str = myformat.format(sroce);
-                mScoreTv.setText(str);
-            }
-        }
-
+        getWasteRate();
+        getEvaluations();
     }
 
+    //添加评论消息
+    public void sendComment(String comment){
+
+        Evaluation evaluation = new Evaluation();
+        evaluation.setComment(comment);
+        evaluation.setUserId(mUser.getUserId());
+        evaluation.setWasteId(mWaste.getId());
+
+        DBManger.getInstance(SearchWasteDetailActivity.this).insertEvaluation(evaluation, new DBManger.IListener() {
+            @Override
+            public void onSuccess() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        initData();
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
+    }
+
+    //获取评论列表
+    public void getEvaluations(){
+        DBManger.getInstance(this).queryEvaluations(mWaste, new DBManger.IEvaListener() {
+            @Override
+            public void onSuccess(List<Evaluation> evaluations) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (evaluations!=null){
+                            mAdapter = new EvaAdapter(SearchWasteDetailActivity.this,evaluations);
+                            mEvaListView.setAdapter(mAdapter);
+                        }
+                    }
+                });
+
+
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
+    }
+
+    //更新评分
+    public void updateRateValue(String value){
+        DBManger.getInstance(this).updateScore(mUser, mWaste, value, new DBManger.IListener() {
+            @Override
+            public void onSuccess() {
+                initData();
+                DBManger.getInstance(SearchWasteDetailActivity.this).updateWasteScore(mWaste,mCurrentScore);
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
+    }
+
+    //获取该用户当前的该垃圾的评分
+    public void getWasteRate(){
+        DBManger.getInstance(this).queryWasteScores(mWaste, new DBManger.IScoreListener() {
+
+            @Override
+            public void onSuccess(List<Score> scores) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (scores.size()!=0){
+                            Float allScore = 0.0f;
+                            for (int i=0;i<scores.size();i++){
+                                Score tempScore = scores.get(i);
+                                String score = scores.get(i).getScore();
+                                Float sc = Float.parseFloat(score);
+                                allScore= allScore+sc;
+                                if (mWaste.getUserId().equals(tempScore.getUserId())){
+                                    mRatingBar.setRating(sc);
+                                }
+                            }
+                            if (allScore!=0.0f)
+                            {
+                                //计算评价得分
+                                double sroce = allScore/scores.size();
+                                java.text.DecimalFormat myformat=new java.text.DecimalFormat("0.0");
+                                mCurrentScore = myformat.format(sroce);
+                                mScoreTv.setText(mCurrentScore);
+
+                            }
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
+    }
 }

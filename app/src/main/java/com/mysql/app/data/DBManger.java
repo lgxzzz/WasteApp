@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.mysql.app.bean.Evaluation;
+import com.mysql.app.bean.Score;
 import com.mysql.app.bean.SearchHis;
 import com.mysql.app.bean.User;
 import com.mysql.app.bean.Waste;
@@ -329,6 +330,44 @@ public class DBManger {
         }).start();
     }
 
+    public void updateWasteScore(Waste waste,String scroe){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // 插入数据的 sql 语句
+                //(WASTE_ID, WASTE_NAME,WASTE_TYPE,WASTE_DES,USER_ID,WASTE_BARCODE,WASTE_SCORE,CREAT_TIME) values (?,?,?,?,?,?,?,?)";
+                String insert_user_sql = "update Waste set WASTE_SCORE= ? where WASTE_ID = ?";
+                PreparedStatement ps = null;
+                if (conn == null) {
+                    return;
+                }
+                try {
+                    ps = conn.prepareStatement(insert_user_sql);
+                    // 为两个 ? 设置具体的值
+                    ps.setString(1, waste.getScore());
+                    ps.setString(2, waste.getId());
+                    // 执行语句
+                    int x = ps.executeUpdate();
+                    if (x!=-1){
+
+                    }else{
+
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (ps != null) {
+                        try {
+                            ps.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
     public void deleteWaset(Waste waste,IListener listener){
         new Thread(new Runnable() {
             @Override
@@ -400,8 +439,120 @@ public class DBManger {
     }
 
     //查询该垃圾的所有评价
-    public List<Evaluation> queryEvaluations(User user){
-        return null;
+    public void queryEvaluations(Waste waste,IEvaListener listener ){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Evaluation> evaluations = new ArrayList<>();
+                // 插入数据的 sql 语句
+                String sql = "select * from Evaluation where WASTE_ID = ?";
+                PreparedStatement ps = null;
+                if (conn == null) {
+                    return;
+                }
+                try {
+
+                    ResultSet rs = null;
+                    ps = conn.prepareStatement(sql);
+                    ps.setString(1, waste.getId());
+                    // 执行语句
+                    rs = ps.executeQuery();
+                    if (rs!=null){
+                        // 展开结果集数据库
+                        while(rs.next()){
+                            // 通过字段检索
+                            String EVA_ID = rs.getString("EVA_ID");
+                            String WASTE_ID = rs.getString("WASTE_ID");
+                            String USER_ID = rs.getString("USER_ID");
+                            String EVA_VAlUE = rs.getString("EVA_VAlUE");
+                            long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
+
+                            User user = queryUserById(USER_ID);
+                            Score score = queryScore(USER_ID,WASTE_ID);
+
+                            Evaluation evaluation = new Evaluation();
+                            evaluation.setId(EVA_ID);
+                            evaluation.setWasteId(WASTE_ID);
+                            evaluation.setUserId(USER_ID);
+                            evaluation.setComment(EVA_VAlUE);
+                            evaluation.setTime(CREAT_TIME);
+                            evaluations.add(evaluation);
+                            evaluation.setmUser(user);
+                            evaluation.setmScore(score);
+                        }
+                        listener.onSuccess(evaluations);
+                    }
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    listener.onError("");
+                } finally {
+                    if (ps != null) {
+                        try {
+                            ps.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
+    //查询该垃圾的所有评分
+    public void queryWasteScores(Waste waste,IScoreListener listener ){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Score> scores = new ArrayList<>();
+                // 插入数据的 sql 语句
+                String sql = "select * from Score where WASTE_ID = ?";
+                PreparedStatement ps = null;
+                if (conn == null) {
+                    return;
+                }
+                try {
+
+                    ResultSet rs = null;
+                    ps = conn.prepareStatement(sql);
+                    ps.setString(1, waste.getId());
+                    // 执行语句
+                    rs = ps.executeQuery();
+                    if (rs!=null){
+                        // 展开结果集数据库
+                        while(rs.next()){
+                            // 通过字段检索
+                            String SCORE_ID = rs.getString("SCORE_ID");
+                            String WASTE_ID = rs.getString("WASTE_ID");
+                            String USER_ID = rs.getString("USER_ID");
+                            String SCORE_VALUE = rs.getString("SCORE_VALUE");
+                            long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
+
+                            Score score = new Score();
+                            score.setId(SCORE_ID);
+                            score.setWasteId(WASTE_ID);
+                            score.setUserId(USER_ID);
+                            score.setScore(SCORE_VALUE);
+                            score.setTime(CREAT_TIME);
+                            scores.add(score);
+                        }
+                        listener.onSuccess(scores);
+                    }
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    listener.onError("");
+                } finally {
+                    if (ps != null) {
+                        try {
+                            ps.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
     }
 
     //获取所有垃圾数据
@@ -450,13 +601,6 @@ public class DBManger {
                         }
                         listener.onSuccess(wastes);
                     }
-
-//                    ps = conn.prepareStatement(sql);
-//                    ps.setString(1, user.getUserId());
-//                    // 执行语句
-//                    ResultSet rs = ps.executeQuery(sql);
-//
-//
                     // 完成后关闭
                     rs.close();
                 } catch (SQLException e) {
@@ -481,6 +625,10 @@ public class DBManger {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                if (user== null){
+                    listener.onError("please logjin before...");
+                    return;
+                }
                 List<SearchHis> searchHis = new ArrayList<>();
                 // 插入数据的 sql 语句
                 String sql = "select * from SearchHis where USER_ID = ?";
@@ -636,7 +784,264 @@ public class DBManger {
         }
     };
 
+    //添加评论
+    public void insertEvaluation(Evaluation evaluation,IListener listener){
+       new Thread(new Runnable() {
+           @Override
+           public void run() {
+               // 插入数据的 sql 语句
+               String insert_sql = "insert into Evaluation (EVA_ID,WASTE_ID, USER_ID,EVA_VAlUE,CREAT_TIME) values (?,?,?,?,?)";
+               PreparedStatement ps = null;
+               if (conn == null) {
+                   return;
+               }
+               try {
+                   ps = conn.prepareStatement(insert_sql);
+                   String eva_id = getRandomEVA_ID();
+                   // 为两个 ? 设置具体的值
+                   ps.setString(1, eva_id);
+                   ps.setString(2, evaluation.getWasteId());
+                   ps.setString(3, evaluation.getUserId());
+                   ps.setString(4, evaluation.getComment());
+                   ps.setLong(5, System.currentTimeMillis());
+                   int x = ps.executeUpdate();
+                   if (x!=-1){
+                       Log.e("lgx","insert eva sucess");
+                       listener.onSuccess();
+                   }else{
+                       Log.e("lgx","insert eva fail");
+                       listener.onError("");
+                   }
+               } catch (SQLException e) {
+                   e.printStackTrace();
+                   listener.onError("");
+               } finally {
+                   if (ps != null) {
+                       try {
+                           ps.close();
+                       } catch (SQLException e) {
+                           e.printStackTrace();
+                       }
+                   }
+               }
+           }
+       }).start();
+    };
 
+    //根据id查询用户
+    public User queryUserById(String id){
+            User user = new User();
+            // 插入数据的 sql 语句
+            String sql = "select * from User where USER_ID = ?";
+            PreparedStatement ps = null;
+            if (conn == null) {
+                return user;
+            }
+            try {
+                ResultSet rs = null;
+                ps = conn.prepareStatement(sql);
+                // 为两个 ? 设置具体的值
+                ps.setString(1, id);
+                // 执行语句
+                rs = ps.executeQuery();
+                if (rs!=null){
+
+                    if (rs.next()) {
+                        String USER_ID = rs.getString("USER_ID");
+                        String USER_NAME = rs.getString("USER_NAME");
+                        String USER_EMAIL = rs.getString("USER_EMAIL");
+                        String USER_ROLE = rs.getString("USER_ROLE");
+
+                        user.setUserId(USER_ID);
+                        user.setUserName(USER_NAME);
+                        user.setEmail(USER_EMAIL);
+                        user.setRole(USER_ROLE);
+                    }else{
+
+                    }
+
+                }else{
+
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (ps != null) {
+                    try {
+                        ps.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return user;
+    };
+
+    //根据id查询用户
+    public Score queryScore(String user_id,String waste_id){
+        Score score = new Score();
+        // 插入数据的 sql 语句
+        String sql = "select * from Score where USER_ID = ? and WASTE_ID = ?";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return score;
+        }
+        try {
+            ResultSet rs = null;
+            ps = conn.prepareStatement(sql);
+            // 为两个 ? 设置具体的值
+            ps.setString(1, user_id);
+            ps.setString(2, waste_id);
+            // 执行语句
+            rs = ps.executeQuery();
+            if (rs!=null){
+
+                if (rs.next()) {
+                    String SCORE_ID = rs.getString("SCORE_ID");
+                    String WASTE_ID = rs.getString("WASTE_ID");
+                    String USER_ID = rs.getString("USER_ID");
+                    String SCORE_VALUE = rs.getString("SCORE_VALUE");
+
+                    score.setUserId(USER_ID);
+                    score.setScore(SCORE_VALUE);
+                    score.setWasteId(WASTE_ID);
+                    score.setId(SCORE_ID);
+                }else{
+
+                }
+
+            }else{
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return score;
+    };
+
+    //查询分数
+    public void insertScore(User user,Waste waste,String value,IListener listener){
+        // 更新 sql 语句
+        String insert_user_sql = "insert into Score (SCORE_ID,WASTE_ID,USER_ID, SCORE_VALUE,CREAT_TIME) values (?,?,?,?,?)";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return;
+        }
+        try {
+            String score_id = getRandomScore_ID();
+
+            ps = conn.prepareStatement(insert_user_sql);
+            // 为两个 ? 设置具体的值
+            ps.setString(1, score_id);
+            ps.setString(2, waste.getId());
+            ps.setString(3, user.getUserId());
+            ps.setString(4, value);
+            ps.setLong(5, System.currentTimeMillis());
+            // 执行语句
+            int x = ps.executeUpdate();
+            if (x!=-1){
+                listener.onSuccess();
+            }else{
+                listener.onError("update fail！");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    //修改评分
+    public void updateScore(User user,Waste waste,String value,IListener listener){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (!isScoreExist(user,waste)){
+                    insertScore(mUser,waste,value,listener);
+                }else{
+                    // 更新 sql 语句
+                    String update_user_sql = "update Score set SCORE_VALUE =? where USER_ID = ? and WASTE_ID = ?";
+                    PreparedStatement ps = null;
+                    if (conn == null) {
+                        return;
+                    }
+                    try {
+                        ps = conn.prepareStatement(update_user_sql);
+                        // 为两个 ? 设置具体的值
+                        ps.setString(1, value);
+                        ps.setString(2, user.getUserId());
+                        ps.setString(3, waste.getId());
+                        // 执行语句
+                        int x = ps.executeUpdate();
+                        if (x!=-1){
+                            listener.onSuccess();
+                        }else{
+                            listener.onError("update fail！");
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (ps != null) {
+                            try {
+                                ps.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+        }
+        }).start();
+    }
+
+    //是否该用户已经评论过该垃圾
+    public boolean isScoreExist(User user,Waste waste){
+        // 插入数据的 sql 语句
+        String insert_user_sql = "select * from Score where USER_ID = ? and WASTE_ID = ?";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return false;
+        }
+        try {
+            ResultSet rs = null;
+            ps = conn.prepareStatement(insert_user_sql);
+            // 为两个 ? 设置具体的值
+            ps.setString(1, user.getUserId());
+            ps.setString(2, waste.getId());
+            // 执行语句
+            rs = ps.executeQuery();
+            if (rs!=null){
+                while (rs.next()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
 
     String pattern = "yyyy-MM-dd HH:mm:ss";
     public static long getStringToDate(String dateString, String pattern) {
@@ -686,6 +1091,24 @@ public class DBManger {
         return strRand;
     }
 
+    //生成随机userid
+    public String getRandomEVA_ID(){
+        String strRand="E" ;
+        for(int i=0;i<10;i++){
+            strRand += String.valueOf((int)(Math.random() * 10)) ;
+        }
+        return strRand;
+    }
+
+    //生成随机userid
+    public String getRandomScore_ID(){
+        String strRand="S" ;
+        for(int i=0;i<10;i++){
+            strRand += String.valueOf((int)(Math.random() * 10)) ;
+        }
+        return strRand;
+    }
+
     public interface IListener{
         public void onSuccess();
         public void onError(String error);
@@ -700,4 +1123,13 @@ public class DBManger {
         public void onError(String error);
     };
 
+    public interface IEvaListener{
+        public void onSuccess(List<Evaluation> evaluations);
+        public void onError(String error);
+    };
+
+    public interface IScoreListener{
+        public void onSuccess(List<Score> scores);
+        public void onError(String error);
+    };
 }

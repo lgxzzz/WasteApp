@@ -16,12 +16,12 @@ import com.mysql.app.WasteEditActivity;
 import com.mysql.app.bean.Waste;
 import com.mysql.app.data.DBManger;
 
-public class BottomDialog extends Dialog {
+public class UserDialog extends Dialog {
     public Waste mWaste;
     public Button mEditBtn;
     public Button mCancelBtn;
     public Button mDeteleBtn;
-    public BottomDialog(Context context) {
+    public UserDialog(Context context) {
         super(context,R.style.ActionSheetDialogStyle);
         View view = LayoutInflater.from(context).inflate(R.layout.bottom_dialog, null);
         setContentView(view);
@@ -74,11 +74,11 @@ public class BottomDialog extends Dialog {
         });
     }
 
-    public BottomDialog(Context context, int themeResId) {
+    public UserDialog(Context context, int themeResId) {
         super(context, themeResId);
     }
 
-    protected BottomDialog(Context context, boolean cancelable,OnCancelListener cancelListener) {
+    protected UserDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
 
 
