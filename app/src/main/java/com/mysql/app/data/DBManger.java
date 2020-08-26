@@ -344,7 +344,7 @@ public class DBManger {
                 try {
                     ps = conn.prepareStatement(insert_user_sql);
                     // 为两个 ? 设置具体的值
-                    ps.setString(1, waste.getScore());
+                    ps.setString(1, scroe);
                     ps.setString(2, waste.getId());
                     // 执行语句
                     int x = ps.executeUpdate();

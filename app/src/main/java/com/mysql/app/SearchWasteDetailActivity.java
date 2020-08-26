@@ -236,7 +236,7 @@ public class SearchWasteDetailActivity extends Activity{
             @Override
             public void onSuccess() {
                 initData();
-                DBManger.getInstance(SearchWasteDetailActivity.this).updateWasteScore(mWaste,mCurrentScore);
+
             }
 
             @Override
@@ -273,7 +273,7 @@ public class SearchWasteDetailActivity extends Activity{
                                 java.text.DecimalFormat myformat=new java.text.DecimalFormat("0.0");
                                 mCurrentScore = myformat.format(sroce);
                                 mScoreTv.setText(mCurrentScore);
-
+                                DBManger.getInstance(SearchWasteDetailActivity.this).updateWasteScore(mWaste,mCurrentScore);
                             }
                         }
                     }
