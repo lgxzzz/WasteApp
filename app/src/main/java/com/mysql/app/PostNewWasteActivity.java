@@ -182,7 +182,7 @@ public class PostNewWasteActivity extends AppCompatActivity {
                     return;
                 }
                 mWaste.setType(mSelectType);
-                DBManger.getInstance(PostNewWasteActivity.this).insertWaset(mWaste, new DBManger.IListener() {
+                DBManger.getInstance(PostNewWasteActivity.this).insertWaste(mWaste, new DBManger.IListener() {
                     @Override
                     public void onSuccess() {
                         mHandler.post(new Runnable() {

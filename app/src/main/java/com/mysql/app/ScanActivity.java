@@ -50,14 +50,6 @@ public class ScanActivity extends Activity {
                 //扫描得到结果震动一下表示
                 vibrate();
 
-//                //获取结果后三秒后，重新开始扫描
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mQRCodeView.startSpot();
-//                    }
-//                }, 3000);
-
                 //数据是使用Intent返回
                 Intent intent = new Intent();
                 //把返回数据存入Intent

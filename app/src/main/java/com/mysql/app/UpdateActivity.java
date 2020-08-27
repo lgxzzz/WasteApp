@@ -15,7 +15,7 @@ import com.mysql.app.bean.User;
 import com.mysql.app.data.DBManger;
 
 /***
- * 注册用户activity
+ * 更新用户activity
  *
  * */
 public class UpdateActivity extends AppCompatActivity {

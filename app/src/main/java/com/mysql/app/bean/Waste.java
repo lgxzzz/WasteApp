@@ -1,7 +1,9 @@
 package com.mysql.app.bean;
 
 import java.io.Serializable;
-
+/***
+ * 垃圾对象
+ * */
 public class Waste implements Serializable {
     public String Id;
     public String Name;

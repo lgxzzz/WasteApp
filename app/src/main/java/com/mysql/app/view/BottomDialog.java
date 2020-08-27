@@ -55,7 +55,7 @@ public class BottomDialog extends Dialog {
             @Override
             public void onClick(View view) {
 
-                DBManger.getInstance(getContext()).deleteWaset(mWaste, new DBManger.IListener() {
+                DBManger.getInstance(getContext()).deleteWaste(mWaste, new DBManger.IListener() {
                     @Override
                     public void onSuccess() {
                         if (listener!=null){

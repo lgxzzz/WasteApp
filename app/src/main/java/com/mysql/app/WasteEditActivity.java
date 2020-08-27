@@ -189,7 +189,7 @@ public class WasteEditActivity extends AppCompatActivity {
                     return;
                 }
                 mWaste.setType(mSelectType);
-                DBManger.getInstance(WasteEditActivity.this).updateWaset(mWaste, new DBManger.IListener() {
+                DBManger.getInstance(WasteEditActivity.this).updateWaste(mWaste, new DBManger.IListener() {
                     @Override
                     public void onSuccess() {
                         mHandler.post(new Runnable() {

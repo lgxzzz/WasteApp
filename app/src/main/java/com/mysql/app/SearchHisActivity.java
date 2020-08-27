@@ -43,8 +43,8 @@ public class SearchHisActivity extends Activity {
     }
 
     public void initData(){
-        DBManger.getInstance(this).getSearchHisByUser();
-
-        List<SearchHis> mSearchHis =
+//        DBManger.getInstance(this).getSearchHisByUser();
+//
+//        List<SearchHis> mSearchHis =
     }
 }
