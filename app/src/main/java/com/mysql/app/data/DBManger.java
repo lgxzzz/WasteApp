@@ -689,7 +689,7 @@ public class DBManger {
                 }
                 List<Waste> wastes = new ArrayList<>();
                 // 插入数据的 sql 语句
-                String sql = "select * from Waste where WASTE_NAME like ? or WASTE_TYPE like ? or WASTE_DES like ?";
+                String sql = "select * from Waste where WASTE_NAME like ? or WASTE_TYPE like ? or WASTE_DES like ? or WASTE_BARCODE like ?";
                 PreparedStatement ps = null;
                 if (conn == null) {
                     return;
@@ -701,6 +701,7 @@ public class DBManger {
                     ps.setString(1, "%"+key+"%");
                     ps.setString(2, "%"+key+"%");
                     ps.setString(3, "%"+key+"%");
+                    ps.setString(4, "%"+key+"%");
                     // 执行语句
                     rs = ps.executeQuery();
                     if (rs!=null){

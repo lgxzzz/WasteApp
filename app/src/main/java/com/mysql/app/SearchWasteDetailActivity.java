@@ -105,8 +105,6 @@ public class SearchWasteDetailActivity extends Activity{
                         String comment = mCommentEd.getText().toString();
                         if (comment.length()!=0){
                             sendComment(comment);
-
-
                         }
                     }
                 });

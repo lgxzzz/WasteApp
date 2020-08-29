@@ -62,7 +62,7 @@ public class SearchResultActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mAdapter = new SearchWasteAdapter(SearchResultActivity.this,wastes);
+                        mAdapter = new SearchWasteAdapter(SearchResultActivity.this,mWastes);
                         mListView.setAdapter(mAdapter);
                     }
                 });
