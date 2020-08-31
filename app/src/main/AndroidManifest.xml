@@ -38,6 +38,7 @@
         <activity android:name=".SearchHisActivity"></activity>
         <activity android:name=".SearchResultActivity"></activity>
         <activity android:name=".SearchWasteDetailActivity"></activity>
+        <activity android:name=".SearchWasteHisActivity"></activity>
     </application>
 
 </manifest>
