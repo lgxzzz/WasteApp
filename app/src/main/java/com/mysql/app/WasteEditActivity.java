@@ -168,6 +168,10 @@ public class WasteEditActivity extends AppCompatActivity {
                     Toast.makeText(WasteEditActivity.this,"Waste name is a required field and cannot be empty", Toast.LENGTH_LONG).show();
                     return;
                 }
+                if (mWaste.getName()!=null&&mWaste.getName().length()==0){
+                    Toast.makeText(WasteEditActivity.this,"Waste name is a required field and cannot be empty", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 if (mWaste.getName()!=null&& mWaste.getName().length()>8){
                     Toast.makeText(WasteEditActivity.this,"Waste name input should not exceed 8 characters.", Toast.LENGTH_LONG).show();
                     return;
@@ -189,7 +193,7 @@ public class WasteEditActivity extends AppCompatActivity {
                     return;
                 }
                 mWaste.setType(mSelectType);
-                DBManger.getInstance(WasteEditActivity.this).updateWaset(mWaste, new DBManger.IListener() {
+                DBManger.getInstance(WasteEditActivity.this).updateWaste(mWaste, new DBManger.IListener() {
                     @Override
                     public void onSuccess() {
                         mHandler.post(new Runnable() {

@@ -16,6 +16,7 @@ import com.mysql.app.PostNewWasteActivity;
 import com.mysql.app.PostedRecordActivity;
 import com.mysql.app.R;
 import com.mysql.app.SearchWasteHisActivity;
+import com.mysql.app.TestActivity;
 import com.mysql.app.bean.User;
 import com.mysql.app.data.DBManger;
 
@@ -97,6 +98,16 @@ public class AboutFragment extends Fragment {
                 if (mUser == null){
                     startActivity(new Intent(getContext(), LoginActivity.class));
                 }
+            }
+        });
+
+        mUserBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (mUser != null){
+                    startActivity(new Intent(getContext(), TestActivity.class));
+                }
+                return false;
             }
         });
 
