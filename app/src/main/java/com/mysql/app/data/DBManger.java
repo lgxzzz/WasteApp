@@ -62,13 +62,20 @@ public class DBManger {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                // 插入数据的 sql 语句
-                String insert_user_sql = "select * from User where USER_EMAIL = ? and USER_PASSWORD = ?";
-                PreparedStatement ps = null;
                 if (conn == null) {
                     listener.onError("connect sql fail");
                     return;
                 }
+                //判断用户是否存在
+                if (!isUserExist(email)){
+                    listener.onError("The user does not exist");
+                    return;
+                }
+
+                // 查询 sql 语句
+                String insert_user_sql = "select * from User where USER_EMAIL = ? and USER_PASSWORD = ?";
+                PreparedStatement ps = null;
+
                 try {
                     ResultSet rs = null;
                     ps = conn.prepareStatement(insert_user_sql);
@@ -160,7 +167,7 @@ public class DBManger {
                 @Override
                 public void run() {
                     //判断用户是否存在
-                    if (isUserExist(user)){
+                    if (isUserExist(user.getEmail())){
                         listener.onError("The user name is already registered！");
                         return;
                     }
@@ -204,7 +211,8 @@ public class DBManger {
             }).start();
     };
 
-    public boolean isUserExist(User user){
+    //判断用户是否存在
+    public boolean isUserExist(String email){
         // 插入数据的 sql 语句
         String insert_user_sql = "select * from User where USER_EMAIL = ?";
         PreparedStatement ps = null;
@@ -216,7 +224,7 @@ public class DBManger {
             ps = conn.prepareStatement(insert_user_sql);
             String userid = getRandomUSER_ID();
             // 为两个 ? 设置具体的值
-            ps.setString(1, user.getUserName());
+            ps.setString(1,email);
             // 执行语句
             rs = ps.executeQuery();
             if (rs!=null){
@@ -238,8 +246,8 @@ public class DBManger {
         return false;
     }
 
-
-    public void insertWaset(Waste waste,IListener listener){
+    //添加新垃圾
+    public void insertWaste(Waste waste,IListener listener){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -288,7 +296,7 @@ public class DBManger {
         }).start();
     }
 
-    public void updateWaset(Waste waste,IListener listener){
+    public void updateWaste(Waste waste,IListener listener){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -682,7 +690,7 @@ public class DBManger {
             @Override
             public void run() {
                 if (user== null){
-                    listener.onError("please logjin before...");
+                    listener.onError("please login before...");
                     return;
                 }
                 List<SearchHis> searchHis = new ArrayList<>();
