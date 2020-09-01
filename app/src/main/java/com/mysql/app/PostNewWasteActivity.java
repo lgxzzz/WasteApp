@@ -161,6 +161,10 @@ public class PostNewWasteActivity extends AppCompatActivity {
                     Toast.makeText(PostNewWasteActivity.this,"Waste name is a required field and cannot be empty", Toast.LENGTH_LONG).show();
                     return;
                 }
+                if (mWaste.getName()!=null&&mWaste.getName().length()==0){
+                    Toast.makeText(PostNewWasteActivity.this,"Waste name is a required field and cannot be empty", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 if (mWaste.getName()!=null&& mWaste.getName().length()>8){
                     Toast.makeText(PostNewWasteActivity.this,"Waste name input should not exceed 8 characters.", Toast.LENGTH_LONG).show();
                     return;
@@ -169,10 +173,10 @@ public class PostNewWasteActivity extends AppCompatActivity {
                     Toast.makeText(PostNewWasteActivity.this,"Waste type is Must be chosen", Toast.LENGTH_LONG).show();
                     return;
                 }
-                if (mWaste.getBarCode()==null){
-                    Toast.makeText(PostNewWasteActivity.this,"Waste barcode is a required field and cannot be empty", Toast.LENGTH_LONG).show();
-                    return;
-                }
+//                if (mWaste.getBarCode()==null){
+//                    Toast.makeText(PostNewWasteActivity.this,"Waste barcode is a required field and cannot be empty", Toast.LENGTH_LONG).show();
+//                    return;
+//                }
                 if (mWaste.getDescription()!=null&& mWaste.getDescription().length()>100){
                     Toast.makeText(PostNewWasteActivity.this,"Waste disposal description input should not exceed 100 characters.", Toast.LENGTH_LONG).show();
                     return;

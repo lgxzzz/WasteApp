@@ -36,6 +36,8 @@
         <activity android:name=".CreateBarCodeActivity"></activity>
         <activity android:name=".ScanActivity"></activity>
         <activity android:name=".SearchHisActivity"></activity>
+        <activity android:name=".HistoryRecordActivity"></activity>
+        <activity android:name=".TestActivity"></activity>
     </application>
 
 </manifest>

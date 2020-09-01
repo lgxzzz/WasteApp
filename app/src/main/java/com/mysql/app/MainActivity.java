@@ -33,7 +33,7 @@ public class MainActivity extends BaseActivtiy {
     }
 
     public void init(){
-        mUser = DBManger.getInstance(this).mUser;
+
         mBottomMenu = findViewById(R.id.person_bottom_menu);
 
         mBottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -43,11 +43,6 @@ public class MainActivity extends BaseActivtiy {
                 return true;
             }
         });
-        if (mUser!=null){
-            showFragment(R.id.bottom_menu_about);
-        }else{
-            showFragment(R.id.bottom_menu_scan);
-        }
 
 
     }
@@ -75,4 +70,15 @@ public class MainActivity extends BaseActivtiy {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mUser = DBManger.getInstance(this).mUser;
+        if (mUser!=null){
+            showFragment(R.id.bottom_menu_about);
+        }else{
+            showFragment(R.id.bottom_menu_scan);
+        }
+
+    }
 }

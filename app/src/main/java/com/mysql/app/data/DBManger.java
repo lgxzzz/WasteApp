@@ -26,9 +26,9 @@ public class DBManger {
     public static  DBManger instance;
 
 //    private static final String REMOTE_IP = "10.0.2.2";
-    private static final String REMOTE_IP = "192.168.1.173";
-    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/sys";
-//    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/test_db";
+    private static final String REMOTE_IP = "192.168.1.101";
+//    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/sys";
+    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/test_db";
     private static final String USER = "root";
     private static final String PASSWORD = "lgx199010170012";
     private Connection conn;

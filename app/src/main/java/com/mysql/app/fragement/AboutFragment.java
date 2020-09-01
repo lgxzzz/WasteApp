@@ -11,12 +11,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.mysql.app.HistoryRecordActivity;
 import com.mysql.app.LoginActivity;
 import com.mysql.app.PostNewWasteActivity;
 import com.mysql.app.PostedRecordActivity;
 import com.mysql.app.R;
+import com.mysql.app.TestActivity;
 import com.mysql.app.bean.User;
 import com.mysql.app.data.DBManger;
+import com.mysql.app.data.TestMgr;
 
 
 /***
@@ -32,6 +35,7 @@ public class AboutFragment extends Fragment {
     Button mCloseBtn;
     Button mPostNewBtn;
     Button mPostRecordBtn;
+    Button mHisRecordBtn;
     User mUser;
 
     @Override
@@ -60,6 +64,7 @@ public class AboutFragment extends Fragment {
         mUserBtn = view.findViewById(R.id.user_btn);
         mPostNewBtn = view.findViewById(R.id.post_new_waste_btn);
         mPostRecordBtn = view.findViewById(R.id.posted_record_btn);
+        mHisRecordBtn = view.findViewById(R.id.his_record_btn);
     };
 
     public void initData() {
@@ -88,6 +93,16 @@ public class AboutFragment extends Fragment {
             }
         });
 
+        mUserBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (mUser != null){
+                    startActivity(new Intent(getContext(), TestActivity.class));
+                }
+                return false;
+            }
+        });
+
         mPostNewBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,7 +125,12 @@ public class AboutFragment extends Fragment {
                 }
             }
         });
-
+        mHisRecordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), HistoryRecordActivity.class));
+            }
+        });
 
     }
 
