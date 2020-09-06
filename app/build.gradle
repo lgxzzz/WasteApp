@@ -31,4 +31,11 @@ dependencies {
     implementation 'com.google.zxing:core:3.2.1'
     implementation 'cn.bingoogolapple:bga-qrcodecore:1.1.7@aar'
     implementation 'cn.bingoogolapple:bga-zxing:1.1.7@aar'
+    testImplementation 'junit:junit:4.12'
+
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    testImplementation 'org.json:json:20140107'
+
 }

@@ -40,6 +40,16 @@ public class DBManger {
         return instance;
     };
 
+    public DBManger(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //链接
+                conn = Util.openConnection(URL, USER, PASSWORD);
+            }
+        }).start();
+
+    }
     public DBManger(final Context mContext){
         this.mContext = mContext;
         new Thread(new Runnable() {
@@ -157,6 +167,8 @@ public class DBManger {
             }
         }).start();
     }
+
+
 
     //注册用户
     public void registerUser(User user,IListener listener){
