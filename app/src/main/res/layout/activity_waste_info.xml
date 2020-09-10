@@ -140,15 +140,20 @@
             android:textSize="25dp"
             android:gravity="center"
             />
-        <TextView
+        <ScrollView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/description_tv"
-            android:text="slajdlfalsfsajsjdlajsldfsjfsjfssfljslf2323213213123112321313122"
-            android:textSize="17dp"
-            android:gravity="center"
-            android:layout_marginLeft="20dp"
-            />
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/description_tv"
+                android:text="slajdlfalsfsajsjdlajsldfsjfsjfssfljslf2323213213123112321313122"
+                android:textSize="17dp"
+                android:gravity="center"
+                android:layout_marginLeft="20dp"
+                />
+        </ScrollView>
+
     </LinearLayout>
     <TextView
         android:layout_width="match_parent"
