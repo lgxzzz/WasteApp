@@ -1,7 +1,9 @@
 package com.mysql.app.fragement;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -9,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -60,12 +63,7 @@ public class ScanFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mQRCodeView.startSpot();
-            }
-        }, 2000);
+        mQRCodeView.startSpot();
     }
 
     public void initView(View view){
@@ -164,11 +162,38 @@ public class ScanFragment extends Fragment {
                 case 1: //从相册图片后返回的uri
                     //启动裁剪
                     Uri uri= data.getData();
-                    parsePhoto(uri.getPath());
+                    String path = getFilePathFromContentUri(uri,this.getContext().getContentResolver());
+                    parsePhoto(path);
                     break;
             }
         }
     }
+
+    /**
+     * Gets the corresponding path to a file from the given content:// URI
+     * @param selectedVideoUri The content:// URI to find the file path from
+     * @param contentResolver The content resolver to use to perform the query.
+     * @return the file path as a string
+     */
+    public static String getFilePathFromContentUri(Uri selectedVideoUri,
+                                                   ContentResolver contentResolver) {
+        String filePath;
+        String[] filePathColumn = {MediaStore.MediaColumns.DATA};
+
+        Cursor cursor = contentResolver.query(selectedVideoUri, filePathColumn, null, null, null);
+//      也可用下面的方法拿到cursor
+//      Cursor cursor = this.context.managedQuery(selectedVideoUri, filePathColumn, null, null, null);
+
+        cursor.moveToFirst();
+
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        filePath = cursor.getString(columnIndex);
+        cursor.close();
+        return filePath;
+    }
+
+
+
 
 
     /**
