@@ -572,7 +572,7 @@ public class DBManger {
             public void run() {
                 List<Waste> wastes = new ArrayList<>();
                 // 插入数据的 sql 语句
-                String sql = "select * from Waste where USER_ID = ?";
+                String sql = "select * from Waste where USER_ID = ? ORDER BY CREAT_TIME DESC";
                 PreparedStatement ps = null;
                 if (conn == null) {
                     return;
