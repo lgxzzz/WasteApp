@@ -11,7 +11,7 @@ create table Waste
    WASTE_ID varchar(20) primary key,
    WASTE_NAME varchar(50),
    WASTE_TYPE varchar(20),
-   WASTE_DES varchar(20),
+   WASTE_DES varchar(200),
    USER_ID varchar(20),
    WASTE_BARCODE varchar(20),
    WASTE_SCORE varchar(20),

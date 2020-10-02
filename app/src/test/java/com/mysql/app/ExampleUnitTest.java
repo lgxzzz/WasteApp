@@ -62,38 +62,48 @@ public class ExampleUnitTest {
 
 
 
+    Waste mWaste = new Waste();
+    String id = getRandomWaste_ID();
+
+
+
+    //生成随机userid
+    public String getRandomWaste_ID(){
+        String strRand="W" ;
+        for(int i=0;i<10;i++){
+            strRand += String.valueOf((int)(Math.random() * 10)) ;
+        }
+        return strRand;
+    }
+
     @Test
-    public void insertWaste(){
-        System.out.println("test insert Waste");
+    public void deleteWaste(){
+        System.out.println("test delete Waste");
         Waste mWaste = new Waste();
-        mWaste.setName("bottle");
-        mWaste.setTime(System.currentTimeMillis());
-        mWaste.setBarCode("123456789");
-        mWaste.setDescription("this is a new Waste");
-        mWaste.setType("Hazardous Waste");
-        mWaste.setUserId("9787121060953");
-        testManger.insertWaste(mWaste, new testManger.IListener() {
+        mWaste.setId(id);
+        testManger.deleteWaset(mWaste, new testManger.IListener() {
             @Override
             public void onSuccess() {
-                System.out.println("test insert Waste success");
+                System.out.println("test delete Waste success");
             }
 
             @Override
             public void onError(String error) {
-                System.out.println("test insert Waste fail:"+error);
+                System.out.println("test delete Waste fail:"+error);
             }
         });
     }
 
+
     @Test
     public void updateWaste(){
         System.out.println("test update Waste");
-        Waste mWaste = new Waste();
         mWaste.setName("bottle");
         mWaste.setTime(System.currentTimeMillis());
         mWaste.setBarCode("78901234");
-        mWaste.setDescription("this is a new Waste");
+        mWaste.setDescription("this is a new Waste水电费水电费爽肤sjfdlsjdfsjfsjfshfshfdfdsfdsfsdjf;sdjf;djsffsfs;js;fjds;lfjdsl;fjdsfdls;fjs;fjs;fjs;jfs;fjls;lfj;fjs;");
         mWaste.setType("Hazardous Waste");
+        mWaste.setId("W9008069439");
         testManger.updateWaste(mWaste, new testManger.IListener() {
             @Override
             public void onSuccess() {
@@ -107,20 +117,26 @@ public class ExampleUnitTest {
         });
     }
 
+
     @Test
-    public void deleteWaste(){
-        System.out.println("test delete Waste");
-        Waste mWaste = new Waste();
-        mWaste.setId("W2492592372");
-        testManger.deleteWaset(mWaste, new testManger.IListener() {
+    public void insertWaste(){
+        System.out.println("test insert Waste");
+        mWaste.setName("bottle");
+        mWaste.setTime(System.currentTimeMillis());
+        mWaste.setBarCode("123456789");
+        mWaste.setDescription("this is a new Waste");
+        mWaste.setType("Hazardous Waste");
+        mWaste.setUserId("9787121060953");
+        mWaste.setId(id);
+        testManger.insertWaste(mWaste, new testManger.IListener() {
             @Override
             public void onSuccess() {
-                System.out.println("test delete Waste success");
+                System.out.println("test insert Waste success");
             }
 
             @Override
             public void onError(String error) {
-                System.out.println("test delete Waste fail:"+error);
+                System.out.println("test insert Waste fail:"+error);
             }
         });
     }

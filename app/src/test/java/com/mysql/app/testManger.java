@@ -242,9 +242,8 @@ public class testManger {
         }
         try {
             ps = conn.prepareStatement(insert_user_sql);
-            String userid = getRandomUSER_ID();
             // 为两个 ? 设置具体的值
-            ps.setString(1, getRandomWaste_ID());
+            ps.setString(1, waste.getId());
             ps.setString(2, waste.getName());
             ps.setString(3, waste.getType());
             ps.setString(4, waste.getDescription());
@@ -282,7 +281,6 @@ public class testManger {
         }
         try {
             ps = conn.prepareStatement(insert_user_sql);
-            String userid = getRandomUSER_ID();
             // 为两个 ? 设置具体的值
             ps.setString(1, waste.getName());
             ps.setString(2, waste.getType());
@@ -509,14 +507,6 @@ public class testManger {
         return strRand;
     }
 
-    //生成随机userid
-    public String getRandomWaste_ID(){
-        String strRand="W" ;
-        for(int i=0;i<10;i++){
-            strRand += String.valueOf((int)(Math.random() * 10)) ;
-        }
-        return strRand;
-    }
 
     //生成随机userid
     public String getRandomSEARCH_ID(){
