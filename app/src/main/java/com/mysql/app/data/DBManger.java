@@ -26,10 +26,16 @@ public class DBManger {
     public static  DBManger instance;
 
 //    private static final String REMOTE_IP = "10.0.2.2";
+<<<<<<< HEAD
 //    private static final String REMOTE_IP = "192.168.1.101";
     private static final String REMOTE_IP = "172.20.10.2";
 //    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/sys";
     private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/test_db";
+=======
+    private static final String REMOTE_IP = "192.168.1.173";
+    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/sys";
+//    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/test_db";
+>>>>>>> e32974ab5f10e9311fc308e0739cdc3ff987b0ed
     private static final String USER = "root";
     private static final String PASSWORD = "lgx199010170012";
     private Connection conn;
@@ -432,7 +438,7 @@ public class DBManger {
             public void run() {
                 List<Waste> wastes = new ArrayList<>();
                 // 插入数据的 sql 语句
-                String sql = "select * from Waste where USER_ID = ?";
+                String sql = "select * from Waste where USER_ID = ? ORDER BY CREAT_TIME DESC";
                 PreparedStatement ps = null;
                 if (conn == null) {
                     return;

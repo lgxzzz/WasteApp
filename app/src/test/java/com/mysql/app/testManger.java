@@ -28,9 +28,9 @@ public class testManger {
     public static testManger instance;
 
 //    private static final String REMOTE_IP = "10.0.2.2";
-    private static final String REMOTE_IP = "192.168.1.101";
-//    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/sys";
-    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/test_db";
+    private static final String REMOTE_IP = "192.168.1.173";
+    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/sys";
+//    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/test_db";
     private static final String USER = "root";
     private static final String PASSWORD = "lgx199010170012";
     private Connection conn;
@@ -260,6 +260,7 @@ public class testManger {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            listener.onError("insert waste fail！");
         } finally {
             if (ps != null) {
                 try {
