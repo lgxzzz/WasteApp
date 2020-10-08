@@ -84,6 +84,35 @@ public class LoginActivity extends Activity implements View.OnClickListener{
             }
         });
 
+
+        //test
+        //登录操作
+//        DBManger.getInstance(LoginActivity.this).login("123@qq.com", "123", new DBManger.IListener() {
+//            @Override
+//            public void onSuccess() {
+//                mHandler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(LoginActivity.this,"Login Success!", Toast.LENGTH_LONG).show();
+//                        User user = DBManger.getInstance(getBaseContext()).mUser;
+//                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+//                        LoginActivity.this.finish();
+//                    }
+//                });
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//                mHandler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(LoginActivity.this,error, Toast.LENGTH_LONG).show();
+//                    }
+//                });
+//            }
+//        });
     }
 
     @Override

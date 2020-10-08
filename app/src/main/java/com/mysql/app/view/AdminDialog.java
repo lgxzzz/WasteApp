@@ -8,7 +8,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 
 import com.mysql.app.R;
@@ -16,34 +15,26 @@ import com.mysql.app.WasteEditActivity;
 import com.mysql.app.bean.Waste;
 import com.mysql.app.data.DBManger;
 
-public class BottomDialog extends Dialog {
+public class AdminDialog extends Dialog {
     public Waste mWaste;
-    public Button mEditBtn;
+    public View mOperateView;
+    public View mConfirmView;
     public Button mCancelBtn;
     public Button mDeteleBtn;
-    public BottomDialog(Context context) {
+    public Button mConfirmBtn;
+    public Button mCancelBtn1;
+    public AdminDialog(Context context) {
         super(context,R.style.ActionSheetDialogStyle);
-        View view = LayoutInflater.from(context).inflate(R.layout.bottom_dialog, null);
+        View view = LayoutInflater.from(context).inflate(R.layout.admin_dialog, null);
         setContentView(view);
         Window dialogWindow = getWindow();
-        dialogWindow.setGravity( Gravity.BOTTOM);
-        mEditBtn = findViewById(R.id.edit_btn);
+        dialogWindow.setGravity( Gravity.CENTER);
         mCancelBtn = findViewById(R.id.cancel_btn);
         mDeteleBtn = findViewById(R.id.delete_btn);
-
-        mEditBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setClass(getContext(),WasteEditActivity.class);
-                Bundle b = new Bundle();
-                b.putSerializable("waste",mWaste);
-                intent.putExtras(b);
-                getContext().startActivity(intent);
-                dismiss();
-            }
-        });
-
+        mOperateView = findViewById(R.id.operate_layout);
+        mConfirmView = findViewById(R.id.confirm_layout);
+        mConfirmBtn = findViewById(R.id.confirm_btn);
+        mCancelBtn1 = findViewById(R.id.cancel1_btn);
         mCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,13 +45,22 @@ public class BottomDialog extends Dialog {
         mDeteleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mOperateView.setVisibility(View.GONE);
+                mConfirmView.setVisibility(View.VISIBLE);
 
-                DBManger.getInstance(getContext()).deleteWaste(mWaste, new DBManger.IListener() {
+            }
+        });
+
+        mConfirmBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DBManger.getInstance(getContext()).deleteWaset(mWaste, new DBManger.IListener() {
                     @Override
                     public void onSuccess() {
                         if (listener!=null){
                             listener.onDelete();
                         }
+                        dismiss();
                     }
 
                     @Override
@@ -68,17 +68,25 @@ public class BottomDialog extends Dialog {
                         if (listener!=null){
                             listener.onError(error);
                         }
+                        dismiss();
                     }
                 });
             }
         });
+
+        mCancelBtn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
     }
 
-    public BottomDialog(Context context, int themeResId) {
+    public AdminDialog(Context context, int themeResId) {
         super(context, themeResId);
     }
 
-    protected BottomDialog(Context context, boolean cancelable,OnCancelListener cancelListener) {
+    protected AdminDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
 
 
@@ -89,14 +97,14 @@ public class BottomDialog extends Dialog {
     }
 
 
-    IBottomDialogListener listener;
-    public interface IBottomDialogListener{
+    IAdminDialogListener listener;
+    public interface IAdminDialogListener{
         public void onDelete();
         public void onError(String error);
     }
 
 
-    public void setListener(IBottomDialogListener listener) {
+    public void setListener(IAdminDialogListener listener) {
         this.listener = listener;
     }
 }

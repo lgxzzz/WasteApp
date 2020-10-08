@@ -200,7 +200,7 @@ public class WasteEditActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 Toast.makeText(WasteEditActivity.this,"Successful post", Toast.LENGTH_LONG).show();
-                                WasteInformationActivity.mWaste = mWaste;
+                                PostedRecordWasteDetailActivity.mWaste = mWaste;
                                 finish();
                             }
                         });

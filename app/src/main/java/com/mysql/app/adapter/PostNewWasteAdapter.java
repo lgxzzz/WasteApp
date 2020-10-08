@@ -7,23 +7,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.mysql.app.PostedRecordWasteDetailActivity;
 import com.mysql.app.R;
-import com.mysql.app.WasteInformationActivity;
 import com.mysql.app.bean.Waste;
 import com.mysql.app.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WasteAdapter extends BaseAdapter {
+public class PostNewWasteAdapter extends BaseAdapter {
 
     Context mContext;
     List<Waste> mMsgInfos = new ArrayList<>();
 
-    public WasteAdapter(Context mContext, List<Waste> mMsgInfos){
+    public PostNewWasteAdapter(Context mContext, List<Waste> mMsgInfos){
         this.mContext = mContext;
         this.mMsgInfos = mMsgInfos;
     }
@@ -51,9 +50,9 @@ public class WasteAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         final Waste msgInfo = mMsgInfos.get(i);
-        WasteAdapter.ViewHoler holer = null;
+        PostNewWasteAdapter.ViewHoler holer = null;
         if (view == null){
-            holer = new WasteAdapter.ViewHoler();
+            holer = new PostNewWasteAdapter.ViewHoler();
             view = LayoutInflater.from(mContext).inflate(R.layout.posted_record_item,null);
             holer.mName = (TextView) view.findViewById(R.id.waste_name_tv);
             holer.mType = (TextView) view.findViewById(R.id.waste_type_tv);
@@ -61,7 +60,7 @@ public class WasteAdapter extends BaseAdapter {
             holer.mTime = (TextView) view.findViewById(R.id.waste_time_tv);
             view.setTag(holer);
         }else{
-            holer = (WasteAdapter.ViewHoler) view.getTag();
+            holer = (PostNewWasteAdapter.ViewHoler) view.getTag();
         }
         holer.mName.setText(msgInfo.getName());
         holer.mType.setText(msgInfo.getType());
@@ -70,7 +69,7 @@ public class WasteAdapter extends BaseAdapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, WasteInformationActivity.class);
+                Intent intent = new Intent(mContext, PostedRecordWasteDetailActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("waste", msgInfo);
                 intent.putExtras(bundle);

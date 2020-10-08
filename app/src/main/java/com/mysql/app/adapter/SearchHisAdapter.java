@@ -1,6 +1,8 @@
 package com.mysql.app.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.mysql.app.R;
-import com.mysql.app.bean.Evaluation;
+import com.mysql.app.SearchResultActivity;
 import com.mysql.app.bean.SearchHis;
 
 import java.util.ArrayList;
@@ -50,36 +52,28 @@ public class SearchHisAdapter extends BaseAdapter {
         SearchHisAdapter.ViewHoler holer = null;
         if (view == null){
             holer = new SearchHisAdapter.ViewHoler();
-            view = LayoutInflater.from(mContext).inflate(R.layout.posted_record_item,null);
-            holer.mName = (TextView) view.findViewById(R.id.waste_name_tv);
-            holer.mType = (TextView) view.findViewById(R.id.waste_name_tv);
-            holer.mScore = (TextView) view.findViewById(R.id.waste_name_tv);
-            holer.mTime = (TextView) view.findViewById(R.id.waste_name_tv);
+            view = LayoutInflater.from(mContext).inflate(R.layout.search_his_item,null);
+            holer.mKeyword = (TextView) view.findViewById(R.id.keyword_tv);
             view.setTag(holer);
         }else{
             holer = (SearchHisAdapter.ViewHoler) view.getTag();
         }
-//        holer.mName.setText(msgInfo.getName());
-//        holer.mType.setText(msgInfo.getType());
-//        holer.mScore.setText(msgInfo.getScore());
-//        holer.mTime.setText(DateUtil.parseTime(msgInfo.getTime()));
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(mContext, WasteInformationActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putSerializable("DATA", msgInfo);
-//                intent.putExtras(bundle);
-//                mContext.startActivity(intent);
-//            }
-//        });
+        holer.mKeyword.setText(msgInfo.getSearchKey());
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, SearchResultActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("searchkey",msgInfo.getSearchKey());
+                bundle.putBoolean("isInsert",false);
+                intent.putExtras(bundle);
+                mContext.startActivity(intent);
+            }
+        });
         return view;
     }
 
     class ViewHoler{
-        TextView mName;
-        TextView mType;
-        TextView mTime;
-        TextView mScore;
+        TextView mKeyword;
     }
 }

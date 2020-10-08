@@ -14,7 +14,7 @@ import com.mysql.app.bean.Evaluation;
 import com.mysql.app.bean.User;
 import com.mysql.app.bean.Waste;
 import com.mysql.app.data.DBManger;
-import com.mysql.app.view.BottomDialog;
+import com.mysql.app.view.UserDialog;
 import com.mysql.app.view.TitleView;
 
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.List;
  * 垃圾详细信息
  *
  * */
-public class WasteInformationActivity extends Activity{
+public class PostedRecordWasteDetailActivity extends Activity{
 
     private TitleView mTitleView;
     private ListView mEvaListView;
@@ -37,36 +37,24 @@ public class WasteInformationActivity extends Activity{
     private TextView mUserTv;
     private EditText mCommentEd;
     private Button mSendBtn;
-    private BottomDialog mBottomDialog;
+    private UserDialog mUserDialog;
     private Handler mHandler = new Handler();
     public static Waste mWaste;
+    public User mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_waste_info);
+        setContentView(R.layout.activity_post_new_waste_info);
+        mUser= DBManger.getInstance(this).mUser;
         mWaste = (Waste) getIntent().getExtras().getSerializable("waste");
         init();
         initData();
     }
 
     public void init(){
-        mBottomDialog = new BottomDialog(this);
-
+        mUserDialog = new UserDialog(this);
         mTitleView = findViewById(R.id.title_view);
-        mTitleView.setTitle("Posted Waste Information");
-        mTitleView.setOnBackListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        mTitleView.setOtherBtn("Manage", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mBottomDialog.show();
-            }
-        });
         mEvaListView = findViewById(R.id.comments_listview);
         mNameTv = findViewById(R.id.waste_name_tv);
         mTypeTv = findViewById(R.id.waste_type_tv);
@@ -77,17 +65,31 @@ public class WasteInformationActivity extends Activity{
         mCommentEd = findViewById(R.id.send_comments_ed);
         mSendBtn = findViewById(R.id.send_comments_btn);
 
+        mTitleView.setTitle("Posted Waste Information");
+        mTitleView.setOnBackListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mTitleView.setOtherBtn("Manage", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mUserDialog.show();
+            }
+        });
+
         mNameTv.setText(mWaste.getName());
         mTypeTv.setText(mWaste.getType());
         mDescriptionTv.setText(mWaste.getDescription());
         mScoreTv.setText(mWaste.getScore());
         mBarCodeTv.setText(mWaste.getBarCode());
 
-        mBottomDialog.setWaste(mWaste);
-        mBottomDialog.setListener(new BottomDialog.IBottomDialogListener() {
+        mUserDialog.setWaste(mWaste);
+        mUserDialog.setListener(new UserDialog.IBottomDialogListener() {
             @Override
             public void onDelete() {
-                WasteInformationActivity.this.finish();
+                PostedRecordWasteDetailActivity.this.finish();
             }
 
             @Override
@@ -100,33 +102,32 @@ public class WasteInformationActivity extends Activity{
     @Override
     protected void onResume() {
         super.onResume();
-        init();
         initData();
     }
 
     public void initData(){
-        User user  = DBManger.getInstance(this).mUser;
-        List<Evaluation> evaluations = DBManger.getInstance(this).queryEvaluations(user);
-        if (evaluations==null){
-            return;
-        }
-        mAdapter = new EvaAdapter(this,evaluations);
-        mEvaListView.setAdapter(mAdapter);
+        DBManger.getInstance(this).queryEvaluations(mWaste, new DBManger.IEvaListener() {
+            @Override
+            public void onSuccess(List<Evaluation> evaluations) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (evaluations!=null){
+                            mAdapter = new EvaAdapter(PostedRecordWasteDetailActivity.this,evaluations);
+                            mEvaListView.setAdapter(mAdapter);
 
-        Float allScore = 0.0f;
-        for (int i=0;i<evaluations.size();i++){
-            String score = evaluations.get(i).getEva_score();
-            Float sc = Float.parseFloat(score);
-            allScore= allScore+sc;
-        }
-        if (allScore!=0.0f)
-        {
-            //计算评价得分
-            double sroce = allScore/evaluations.size();
-            java.text.DecimalFormat myformat=new java.text.DecimalFormat("0.0");
-            String str = myformat.format(sroce);
-            mScoreTv.setText(str);
-        }
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
+
+
     }
 
 }

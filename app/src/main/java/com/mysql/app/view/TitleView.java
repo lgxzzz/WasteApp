@@ -53,6 +53,10 @@ public class TitleView extends RelativeLayout {
         mBackBtn.setOnClickListener(listener);
     }
 
+    public void setOtherBtnVisible(boolean isVisible){
+        mOtherBtn.setVisibility(isVisible?VISIBLE:GONE);
+    }
+
     public void setOtherBtn(String text,OnClickListener listener){
         mOtherBtn.setVisibility(VISIBLE);
         mOtherBtn.setText(text);

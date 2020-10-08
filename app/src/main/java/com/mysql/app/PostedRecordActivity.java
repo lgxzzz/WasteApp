@@ -1,19 +1,12 @@
 package com.mysql.app;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.mysql.app.adapter.WasteAdapter;
+import com.mysql.app.adapter.PostNewWasteAdapter;
 import com.mysql.app.bean.User;
 import com.mysql.app.bean.Waste;
 import com.mysql.app.data.DBManger;
@@ -30,7 +23,7 @@ public class PostedRecordActivity extends Activity{
 
     private TitleView mTitleView;
     private ListView mListView;
-    private WasteAdapter mAdapter;
+    private PostNewWasteAdapter mAdapter;
     private Handler mHandler = new Handler();
 
     @Override
@@ -67,7 +60,7 @@ public class PostedRecordActivity extends Activity{
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        mAdapter = new WasteAdapter(PostedRecordActivity.this,wastes);
+                        mAdapter = new PostNewWasteAdapter(PostedRecordActivity.this,wastes);
                         mListView.setAdapter(mAdapter);
                     }
                 });

@@ -1,9 +1,14 @@
 package com.mysql.app;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.view.MenuItem;
 
 import com.mysql.app.bean.User;
@@ -26,14 +31,17 @@ public class MainActivity extends BaseActivtiy {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         init();
-
+        requestPermissions();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+        }
 
     }
 
     public void init(){
-
+        mUser = DBManger.getInstance(this).mUser;
         mBottomMenu = findViewById(R.id.person_bottom_menu);
 
         mBottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -43,6 +51,13 @@ public class MainActivity extends BaseActivtiy {
                 return true;
             }
         });
+        if (mUser!=null){
+            mBottomMenu.setSelectedItemId(R.id.bottom_menu_about);
+            showFragment(R.id.bottom_menu_about);
+        }else{
+            mBottomMenu.setSelectedItemId(R.id.bottom_menu_search);
+            showFragment(R.id.bottom_menu_search);
+        }
 
 
     }
@@ -70,15 +85,28 @@ public class MainActivity extends BaseActivtiy {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mUser = DBManger.getInstance(this).mUser;
-        if (mUser!=null){
-            showFragment(R.id.bottom_menu_about);
-        }else{
-            showFragment(R.id.bottom_menu_scan);
-        }
+    private void requestPermissions(){
+        try {
+            if (Build.VERSION.SDK_INT >= 23) {
+                int permission = ActivityCompat.checkSelfPermission(this,
+                        Manifest.permission.CAMERA);
+                if(permission!= PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this,new String[]
+                            {Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.CAMERA,
+                                    Manifest.permission.WRITE_SETTINGS,Manifest.permission.READ_EXTERNAL_STORAGE,
+                            },0x0010);
+                }
 
+                if(permission != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this,new String[] {
+                            Manifest.permission.WRITE_SETTINGS,Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE},0x0010);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

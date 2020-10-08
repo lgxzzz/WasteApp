@@ -8,7 +8,8 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -31,12 +32,14 @@
         <activity android:name=".UpdateActivity"></activity>
         <activity android:name=".PostNewWasteActivity"></activity>
         <activity android:name=".PostedRecordActivity"></activity>
-        <activity android:name=".WasteInformationActivity"></activity>
+        <activity android:name=".PostedRecordWasteDetailActivity"></activity>
         <activity android:name=".WasteEditActivity"></activity>
         <activity android:name=".CreateBarCodeActivity"></activity>
         <activity android:name=".ScanActivity"></activity>
         <activity android:name=".SearchHisActivity"></activity>
-        <activity android:name=".HistoryRecordActivity"></activity>
+        <activity android:name=".SearchResultActivity"></activity>
+        <activity android:name=".SearchWasteDetailActivity"></activity>
+        <activity android:name=".SearchWasteHisActivity"></activity>
         <activity android:name=".TestActivity"></activity>
     </application>
 

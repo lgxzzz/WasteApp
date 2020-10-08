@@ -1,10 +1,7 @@
 package com.mysql.app.bean;
 
-
 import java.io.Serializable;
-/***
- * 垃圾对象
- * */
+
 public class Waste implements Serializable {
     public String Id;
     public String Name;
@@ -77,10 +74,5 @@ public class Waste implements Serializable {
 
     public void setId(String id) {
         Id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "id:"+Id+" Name:"+Name+" Type:"+Type+" Description:"+Description+" BarCode:"+BarCode;
     }
 }

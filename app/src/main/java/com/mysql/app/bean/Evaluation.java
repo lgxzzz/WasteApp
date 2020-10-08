@@ -1,62 +1,77 @@
 package com.mysql.app.bean;
 
 public class Evaluation {
-    String content;
-    String tch_name;
-    String user_number;
-    String course_name;
-    String course_time;
-    String eva_score;
+    String id;
+    String WasteId;
+    String UserId;
+    String Comment;
+    long Time;
 
-    public String getCourse_time() {
-        return course_time;
+    User mUser;
+    Waste mWaste;
+    Score mScore;
+
+    public String getId() {
+        return id;
     }
 
-    public void setCourse_time(String course_time) {
-        this.course_time = course_time;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getEva_score() {
-        return eva_score;
+    public String getWasteId() {
+        return WasteId;
     }
 
-    public void setEva_score(String eva_score) {
-        this.eva_score = eva_score;
+    public void setWasteId(String wasteId) {
+        WasteId = wasteId;
     }
 
-    public String getUser_number() {
-        return user_number;
+    public String getUserId() {
+        return UserId;
     }
 
-    public void setUser_number(String user_number) {
-        this.user_number = user_number;
+    public void setUserId(String userId) {
+        UserId = userId;
     }
 
-    public String getContent() {
-        return content;
+    public String getComment() {
+        return Comment;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setComment(String comment) {
+        Comment = comment;
     }
 
-    public String getTch_name() {
-        return tch_name;
+    public long getTime() {
+        return Time;
     }
 
-    public void setTch_name(String tch_name) {
-        this.tch_name = tch_name;
+    public void setTime(long time) {
+        Time = time;
     }
 
-    public String getCourse_name() {
-        return course_name;
+    public User getmUser() {
+        return mUser;
     }
 
-    public void setCourse_name(String course_name) {
-        this.course_name = course_name;
+    public void setmUser(User mUser) {
+        this.mUser = mUser;
     }
 
-    public String toString(){
-        return course_name +" "+tch_name+" "+content;
+    public Waste getmWaste() {
+        return mWaste;
+    }
+
+    public void setmWaste(Waste mWaste) {
+        this.mWaste = mWaste;
+    }
+
+    public Score getmScore() {
+        return mScore;
+    }
+
+    public void setmScore(Score mScore) {
+        this.mScore = mScore;
     }
 }

@@ -230,7 +230,7 @@ public class TestMgr {
     public static void testDeteleWaste(){
         Waste mWaste = new Waste();
         mWaste.setId("W2492592372");
-        DBManger.getInstance(mContext).deleteWaste(mWaste, new DBManger.IListener() {
+        DBManger.getInstance(mContext).deleteWaset(mWaste, new DBManger.IListener() {
             @Override
             public void onSuccess() {
                 mHandler.post(new Runnable() {

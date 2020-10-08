@@ -11,15 +11,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.mysql.app.HistoryRecordActivity;
 import com.mysql.app.LoginActivity;
 import com.mysql.app.PostNewWasteActivity;
 import com.mysql.app.PostedRecordActivity;
 import com.mysql.app.R;
+import com.mysql.app.SearchWasteHisActivity;
 import com.mysql.app.TestActivity;
 import com.mysql.app.bean.User;
 import com.mysql.app.data.DBManger;
-import com.mysql.app.data.TestMgr;
 
 
 /***
@@ -31,11 +30,11 @@ public class AboutFragment extends Fragment {
     TextView mUserRoleTv;
 
     Button mUserBtn;
+    Button mHisRecordBtn;
     Button mLoginOutBtn;
     Button mCloseBtn;
     Button mPostNewBtn;
     Button mPostRecordBtn;
-    Button mHisRecordBtn;
     User mUser;
 
     @Override
@@ -62,9 +61,9 @@ public class AboutFragment extends Fragment {
 
         mUserRoleTv = view.findViewById(R.id.user_role_tv);
         mUserBtn = view.findViewById(R.id.user_btn);
+        mHisRecordBtn = view.findViewById(R.id.his_record_btn);
         mPostNewBtn = view.findViewById(R.id.post_new_waste_btn);
         mPostRecordBtn = view.findViewById(R.id.posted_record_btn);
-        mHisRecordBtn = view.findViewById(R.id.his_record_btn);
     };
 
     public void initData() {
@@ -74,6 +73,15 @@ public class AboutFragment extends Fragment {
         }else{
             mUserBtn.setText("USER");
         }
+
+        mHisRecordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mUser != null){
+                    startActivity(new Intent(getContext(), SearchWasteHisActivity.class));
+                }
+            }
+        });
 
         mUserRoleTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,12 +133,7 @@ public class AboutFragment extends Fragment {
                 }
             }
         });
-        mHisRecordBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getContext(), HistoryRecordActivity.class));
-            }
-        });
+
 
     }
 

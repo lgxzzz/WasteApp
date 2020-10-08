@@ -24,6 +24,29 @@ create table SearchHis
    SEARCH_KEY varchar(20),
    CREAT_TIME BIGINT
 );
+create table Evaluation
+(
+   EVA_ID varchar(20) primary key,
+   WASTE_ID varchar(20),
+   USER_ID varchar(20),
+   EVA_VAlUE varchar(200),
+   CREAT_TIME BIGINT
+);
+create table Score
+(
+   SCORE_ID varchar(20) primary key,
+   WASTE_ID varchar(20),
+   USER_ID varchar(20),
+   SCORE_VALUE varchar(20),
+   CREAT_TIME BIGINT
+);
+create table SearcWasteHis
+(
+   SEACH_WASTE_HIS_ID varchar(20) primary key,
+   WASTE_ID varchar(20),
+   USER_ID varchar(20),
+   CREAT_TIME BIGINT
+);
 insert into User values('9787302164289','amon','123','123@qq.com',"Administrator");
 insert into User values('9787121060953','bob','456','456@361.com',"User");
 
