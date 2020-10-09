@@ -2,6 +2,7 @@ package com.mysql.app;
 
 import android.content.Context;
 
+import com.mysql.app.bean.Evaluation;
 import com.mysql.app.bean.User;
 import com.mysql.app.bean.Waste;
 import com.mysql.app.data.DBManger;
@@ -159,6 +160,83 @@ public class ExampleUnitTest {
             @Override
             public void onError(String error) {
                 System.out.println("test getWastes By User fail:"+error);
+            }
+        });
+    }
+
+    @Test
+    public void insertSearchHis(){
+        System.out.println("test insert SearchHis");
+        User mUser = new User();
+        mUser.setUserId("9787302164289");
+
+        String key = "water";
+
+        testManger.insertSearchHis(mUser, key, new testManger.IListener() {
+            @Override
+            public void onSuccess() {
+                System.out.println("test insert SearchHis success");
+            }
+
+            @Override
+            public void onError(String error) {
+                System.out.println("test insert SearchHis fail:"+error);
+            }
+        });
+    }
+
+    @Test
+    public void insertEvaluation(){
+        System.out.println("test insert Evaluation");
+
+        Evaluation evaluation = new Evaluation();
+        evaluation.setWasteId("W9008069439");
+        evaluation.setUserId("9787302164289");
+        evaluation.setComment("test comment");
+        testManger.insertEvaluation(evaluation, new testManger.IListener() {
+            @Override
+            public void onSuccess() {
+                System.out.println("test insert Evaluation success");
+            }
+
+            @Override
+            public void onError(String error) {
+                System.out.println("test insert Evaluation fail:"+error);
+            }
+        });
+    }
+
+    @Test
+    public void insertSearchWasteHis(){
+        System.out.println("test insert SearchWasteHis");
+
+        testManger.insertSearchWasteHis("9787302164289", "W9008069439", new testManger.IListener() {
+            @Override
+            public void onSuccess() {
+                System.out.println("test insert SearchWasteHis success");
+            }
+
+            @Override
+            public void onError(String error) {
+                System.out.println("test insert SearchWasteHis fail:"+error);
+            }
+        });
+    }
+
+    @Test
+    public void queryEvaluations(){
+        System.out.println("test query Evaluations");
+        mWaste.setId("W9008069439");
+        testManger.queryEvaluations(mWaste, new testManger.IEvaListener() {
+            @Override
+            public void onSuccess(String evaluations) {
+                System.out.println("test query Evaluations success");
+                System.out.println(evaluations);
+            }
+
+            @Override
+            public void onError(String error) {
+                System.out.println("test query Evaluations fail:"+error);
             }
         });
     }
