@@ -52,6 +52,8 @@ public class LeftSwipeMenuRecyclerView extends RecyclerView {
     //实现弹性滑动，恢复
     private Scroller mScroller;
 
+    private boolean isDelete =false;
+
     //item的事件监听
     private OnItemActionListener mListener;
 
@@ -97,9 +99,16 @@ public class LeftSwipeMenuRecyclerView extends RecyclerView {
                     tvDelete.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            mItemLayout.scrollTo(0, 0);
-                            mMenuState =MENU_CLOSED;
-                            mListener.OnItemDelete(mPosition);
+                            if (isDelete){
+                                tvDelete.setText("Delete");
+                                mItemLayout.scrollTo(0, 0);
+                                mMenuState =MENU_CLOSED;
+                                mListener.OnItemDelete(mPosition);
+                            }else{
+                                tvDelete.setText("Confirm to delete");
+                                isDelete = true;
+                            }
+
                         }
                     });
                     //设置置顶按钮点击监听

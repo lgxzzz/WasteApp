@@ -753,7 +753,7 @@ public class DBManger {
                     String WASTE_BARCODE = rs.getString("WASTE_BARCODE");
                     String WASTE_SCORE = rs.getString("WASTE_SCORE");
                     long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
-
+                    User user = queryUserById(USER_ID);
                     waste.setId(WASTE_ID);
                     waste.setName(WASTE_NAME);
                     waste.setType(WASTE_TYPE);
@@ -762,6 +762,7 @@ public class DBManger {
                     waste.setBarCode(WASTE_BARCODE);
                     waste.setScore(WASTE_SCORE);
                     waste.setTime(CREAT_TIME);
+                    waste.setmUser(user);
                 }
             }
             // 完成后关闭
@@ -913,9 +914,9 @@ public class DBManger {
 
     //更新搜索历史关键字
     public void updateSearchHis(User user,String key){
-        if (isSearchHisExist(key)){
+        if (isSearchHisExist(user,key)){
             // 更新 sql 语句
-            String update_user_sql = "update SearchHis set CREAT_TIME =? where SEARCH_KEY = ?";
+            String update_user_sql = "update SearchHis set CREAT_TIME =? where SEARCH_KEY = ? and USER_ID = ?";
             PreparedStatement ps = null;
             if (conn == null) {
                 return;
@@ -925,6 +926,7 @@ public class DBManger {
                 // 为两个 ? 设置具体的值
                 ps.setLong(1, System.currentTimeMillis());
                 ps.setString(2, key);
+                ps.setString(3, user.getUserId());
                 // 执行语句
                 int x = ps.executeUpdate();
                 if (x!=-1){
@@ -949,9 +951,9 @@ public class DBManger {
     }
 
     //是否存在该搜索历史关键字
-    public boolean isSearchHisExist(String key){
+    public boolean isSearchHisExist(User user,String key){
         // 插入数据的 sql 语句
-        String insert_user_sql = "select * from SearchHis where SEARCH_KEY = ?";
+        String insert_user_sql = "select * from SearchHis where SEARCH_KEY = ? and USER_ID = ?";
         PreparedStatement ps = null;
         if (conn == null) {
             return false;
@@ -962,6 +964,7 @@ public class DBManger {
             String userid = getRandomUSER_ID();
             // 为两个 ? 设置具体的值
             ps.setString(1,key);
+            ps.setString(2,user.getUserId());
             // 执行语句
             rs = ps.executeQuery();
             if (rs!=null){
@@ -1280,7 +1283,7 @@ public class DBManger {
     }
 
     //根据用户获取搜索记录
-    public void getSearchWasteHisByUser(User user,ISearchWasteHisListener listener){
+    public void getSearchWasteHisByUser(User mUser,ISearchWasteHisListener listener){
 
         new Thread(new Runnable() {
             @Override
@@ -1297,7 +1300,7 @@ public class DBManger {
 
                     ResultSet rs = null;
                     ps = conn.prepareStatement(sql);
-                    ps.setString(1, user.getUserId());
+                    ps.setString(1, mUser.getUserId());
                     // 执行语句
                     rs = ps.executeQuery();
                     if (rs!=null){
@@ -1339,13 +1342,16 @@ public class DBManger {
     }
 
     //添加垃圾搜索记录
-    public void insertSearchWasteHis(String user_id,String waste_id){
+    public void insertSearchWasteHis(String waste_id){
         new Thread(new Runnable() {
             @Override
             public void run() {
-//                if (isSearchWasteBefore(user_id,waste_id)){
-//                    return ;
-//                }
+                if (mUser == null){
+                    return;
+                }
+                if (isSearchWasteBefore(mUser.getUserId(),waste_id)){
+                    return ;
+                }
                 // 更新 sql 语句
                 String insert_user_sql = "insert into SearcWasteHis (SEACH_WASTE_HIS_ID,WASTE_ID,USER_ID,CREAT_TIME) values (?,?,?,?)";
                 PreparedStatement ps = null;
@@ -1359,7 +1365,7 @@ public class DBManger {
                     // 为两个 ? 设置具体的值
                     ps.setString(1, searchWasteHis_id);
                     ps.setString(2, waste_id);
-                    ps.setString(3,user_id);
+                    ps.setString(3,mUser.getUserId());
                     ps.setLong(4, System.currentTimeMillis());
                     // 执行语句
                     int x = ps.executeUpdate();

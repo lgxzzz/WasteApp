@@ -50,18 +50,18 @@ public class SearchWasteHisActivity extends Activity{
             }
         });
         mListView = findViewById(R.id.waste_posted_record_listview);
-        mDialog = new SearchWasteHisDialog(this);
-        mDialog.setListener(new SearchWasteHisDialog.ISearchWasteHisDialogListener() {
-            @Override
-            public void onDelete() {
-                initData();
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        });
+//        mDialog = new SearchWasteHisDialog(this);
+//        mDialog.setListener(new SearchWasteHisDialog.ISearchWasteHisDialogListener() {
+//            @Override
+//            public void onDelete() {
+//                initData();
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        });
     }
 
     @Override
@@ -104,8 +104,19 @@ public class SearchWasteHisActivity extends Activity{
                             @Override
                             public void OnItemDelete(int position) {
                                 Waste waste = mSearchWasteHis.get(position).getmWaste();
-                                mDialog.setWaste(waste);
-                                mDialog.show();
+                                DBManger.getInstance(getApplicationContext()).deleteSearcWasteHis(waste, new DBManger.IListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        initData();
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+
+                                    }
+                                });
+//                                mDialog.setWaste(waste);
+//                                mDialog.show();
                             }
                         });
                     }

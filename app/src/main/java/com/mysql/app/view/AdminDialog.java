@@ -28,7 +28,7 @@ public class AdminDialog extends Dialog {
         View view = LayoutInflater.from(context).inflate(R.layout.admin_dialog, null);
         setContentView(view);
         Window dialogWindow = getWindow();
-        dialogWindow.setGravity( Gravity.CENTER);
+        dialogWindow.setGravity( Gravity.BOTTOM);
         mCancelBtn = findViewById(R.id.cancel_btn);
         mDeteleBtn = findViewById(R.id.delete_btn);
         mOperateView = findViewById(R.id.operate_layout);

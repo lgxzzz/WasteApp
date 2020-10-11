@@ -76,7 +76,7 @@ public class SearchWasteAdapter extends BaseAdapter {
                 intent.putExtras(bundle);
                 mContext.startActivity(intent);
                 //点击时添加搜索记录
-                DBManger.getInstance(mContext).insertSearchWasteHis(msgInfo.getUserId(),msgInfo.getId());
+                DBManger.getInstance(mContext).insertSearchWasteHis(msgInfo.getId());
             }
         });
         return view;
