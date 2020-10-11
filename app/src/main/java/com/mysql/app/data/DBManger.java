@@ -32,7 +32,7 @@ public class DBManger {
 //    private static final String REMOTE_IP = "192.168.1.101";
     private static final String REMOTE_IP = "172.20.10.2";
 //    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/sys";
-    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/test_db";
+    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/test_db??autoReconnect=true";
 
     private static final String USER = "root";
     private static final String PASSWORD = "lgx199010170012";
@@ -792,7 +792,7 @@ public class DBManger {
                 }
                 List<SearchHis> searchHis = new ArrayList<>();
                 // 插入数据的 sql 语句
-                String sql = "select * from SearchHis where USER_ID = ?";
+                String sql = "select * from SearchHis where USER_ID = ? ORDER BY CREAT_TIME DESC";
                 PreparedStatement ps = null;
                 if (conn == null) {
                     return;
@@ -846,11 +846,11 @@ public class DBManger {
             @Override
             public void run() {
                 if (isInsert){
-                    insertSearchHis(user,key);
+                    updateSearchHis(user,key);
                 }
                 List<Waste> wastes = new ArrayList<>();
                 // 插入数据的 sql 语句
-                String sql = "select * from Waste where WASTE_NAME like ? or WASTE_TYPE like ? or WASTE_DES like ? or WASTE_BARCODE like ?";
+                String sql = "select * from Waste where WASTE_NAME like ? or WASTE_TYPE like ? or WASTE_DES like ? or WASTE_BARCODE like ? ORDER BY CREAT_TIME DESC";
                 PreparedStatement ps = null;
                 if (conn == null) {
                     return;
@@ -877,8 +877,9 @@ public class DBManger {
                             String WASTE_BARCODE = rs.getString("WASTE_BARCODE");
                             String WASTE_SCORE = rs.getString("WASTE_SCORE");
                             long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
-
+                            User user = queryUserById(USER_ID);
                             Waste waste = new Waste();
+                            waste.setmUser(user);
                             waste.setId(WASTE_ID);
                             waste.setName(WASTE_NAME);
                             waste.setType(WASTE_TYPE);
@@ -887,6 +888,7 @@ public class DBManger {
                             waste.setBarCode(WASTE_BARCODE);
                             waste.setScore(WASTE_SCORE);
                             waste.setTime(CREAT_TIME);
+
                             wastes.add(waste);
                         }
                         listener.onSuccess(wastes);
@@ -907,6 +909,78 @@ public class DBManger {
                 }
             }
         }).start();
+    }
+
+    //更新搜索历史关键字
+    public void updateSearchHis(User user,String key){
+        if (isSearchHisExist(key)){
+            // 更新 sql 语句
+            String update_user_sql = "update SearchHis set CREAT_TIME =? where SEARCH_KEY = ?";
+            PreparedStatement ps = null;
+            if (conn == null) {
+                return;
+            }
+            try {
+                ps = conn.prepareStatement(update_user_sql);
+                // 为两个 ? 设置具体的值
+                ps.setLong(1, System.currentTimeMillis());
+                ps.setString(2, key);
+                // 执行语句
+                int x = ps.executeUpdate();
+                if (x!=-1){
+                    Log.e("lgx","update searchhis sucess");
+                }else{
+                    Log.e("lgx","update searchhis fail");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (ps != null) {
+                    try {
+                        ps.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }else{
+            insertSearchHis(user,key);
+        }
+    }
+
+    //是否存在该搜索历史关键字
+    public boolean isSearchHisExist(String key){
+        // 插入数据的 sql 语句
+        String insert_user_sql = "select * from SearchHis where SEARCH_KEY = ?";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return false;
+        }
+        try {
+            ResultSet rs = null;
+            ps = conn.prepareStatement(insert_user_sql);
+            String userid = getRandomUSER_ID();
+            // 为两个 ? 设置具体的值
+            ps.setString(1,key);
+            // 执行语句
+            rs = ps.executeQuery();
+            if (rs!=null){
+                while (rs.next()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
     }
 
     //添加搜索历史关键字
@@ -1269,9 +1343,9 @@ public class DBManger {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (isSearchWasteBefore(user_id,waste_id)){
-                    return ;
-                }
+//                if (isSearchWasteBefore(user_id,waste_id)){
+//                    return ;
+//                }
                 // 更新 sql 语句
                 String insert_user_sql = "insert into SearcWasteHis (SEACH_WASTE_HIS_ID,WASTE_ID,USER_ID,CREAT_TIME) values (?,?,?,?)";
                 PreparedStatement ps = null;

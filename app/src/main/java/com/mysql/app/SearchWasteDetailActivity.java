@@ -109,7 +109,6 @@ public class SearchWasteDetailActivity extends Activity{
                     }
                 });
             }
-            mUserTv.setText(mUser.getEmail());
         }else if(mUser.getRole().equals("Administrator")){
             //管理员
             mTitleView.setOtherBtn("Delete", new View.OnClickListener() {
@@ -141,7 +140,7 @@ public class SearchWasteDetailActivity extends Activity{
                     }
                 }
             });
-            mUserTv.setText(mUser.getEmail());
+
         }
 
         mTitleView.setOnBackListener(new View.OnClickListener() {
@@ -163,7 +162,7 @@ public class SearchWasteDetailActivity extends Activity{
         mDescriptionTv.setText(mWaste.getDescription());
         mScoreTv.setText(mWaste.getScore());
         mBarCodeTv.setText(mWaste.getBarCode());
-
+        mUserTv.setText(mWaste.getmUser().getEmail());
     }
 
     @Override

@@ -11,6 +11,15 @@ public class Waste implements Serializable {
     public String BarCode;
     public String Score = "0";
     public long Time = 0;
+    User mUser;
+
+    public User getmUser() {
+        return mUser;
+    }
+
+    public void setmUser(User mUser) {
+        this.mUser = mUser;
+    }
 
     public String getName() {
         return Name;
