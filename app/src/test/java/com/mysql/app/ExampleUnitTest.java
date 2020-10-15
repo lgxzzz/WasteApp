@@ -3,6 +3,7 @@ package com.mysql.app;
 import android.content.Context;
 
 import com.mysql.app.bean.Evaluation;
+import com.mysql.app.bean.Score;
 import com.mysql.app.bean.User;
 import com.mysql.app.bean.Waste;
 import com.mysql.app.data.DBManger;
@@ -239,5 +240,213 @@ public class ExampleUnitTest {
                 System.out.println("test query Evaluations fail:"+error);
             }
         });
+    }
+
+    //2020.10.15
+    @Test
+    public void updateWasteScore(){
+        System.out.println("test update WasteScore");
+        mWaste.setId("W9178123295");
+        testManger.updateWasteScore(mWaste, "5.0", new testManger.IListener() {
+            @Override
+            public void onSuccess() {
+                System.out.println("test update WasteScore success");
+            }
+
+            @Override
+            public void onError(String error) {
+                System.out.println("test update WasteScore error:"+error);
+            }
+        });
+    }
+
+    @Test
+    public void deleteSearcWasteHis(){
+        System.out.println("test delete SearcWasteHis");
+        testManger.deleteSearcWasteHis("W9178123295", new testManger.IListener() {
+            @Override
+            public void onSuccess() {
+                System.out.println("test delete SearcWasteHis success");
+            }
+
+            @Override
+            public void onError(String error) {
+                System.out.println("test delete SearcWasteHis error:"+error);
+            }
+        });
+    }
+
+    @Test
+    public void isWasteExist(){
+        System.out.println("test isWasteExist");
+        mWaste.setId("W9178123295");
+        boolean flag = testManger.isWasteExist(mWaste);
+        if (flag){
+            System.out.println("test isWasteExist success");
+        }else {
+            System.out.println("test isWasteExist error");
+        }
+    }
+
+    @Test
+    public void queryWasteScores(){
+        System.out.println("test query WasteScores");
+        mWaste.setId("W9178123295");
+        testManger.queryWasteScores(mWaste, new testManger.IScoreListener() {
+            @Override
+            public void onSuccess(String scores) {
+                System.out.println("test queryWasteScores success");
+                System.out.println(scores);
+            }
+
+            @Override
+            public void onError(String error) {
+                System.out.println("test queryWasteScores error");
+            }
+        });
+    }
+
+    @Test
+    public void getWastesById(){
+        System.out.println("test get Wastes By Id");
+        Waste waste = testManger.getWastesById("W9744532339");
+        System.out.println("test get Wastes By Id success");
+    }
+
+    @Test
+    public void getSearchHisByUser(){
+        System.out.println("test get SearchHis By User");
+        testManger.getSearchHisByUser("9787121060953", new testManger.ISearchHisListener() {
+            @Override
+            public void onSuccess(String searchHis) {
+                System.out.println("test get SearchHis By User success");
+                System.out.println(searchHis);
+            }
+
+            @Override
+            public void onError(String error) {
+                System.out.println("test get SearchHis By User fail");
+            }
+        });
+    }
+
+    @Test
+    public void searchWasteByKeyWord(){
+        System.out.println("test search Waste By KeyWord");
+        testManger.searchWasteByKeyWord("bottle", new testManger.IWasteListener() {
+            @Override
+            public void onSuccess(String wastes) {
+                System.out.println("test search Waste By KeyWord onSuccess");
+            }
+
+            @Override
+            public void onError(String error) {
+                System.out.println("test search Waste By KeyWord fail");
+            }
+        });
+    }
+
+    @Test
+    public void updateSearchHis(){
+        System.out.println("test update SearchHis");
+        testManger.updateSearchHis("9787121060953", "bottle", new testManger.IListener() {
+            @Override
+            public void onSuccess() {
+                System.out.println("test update SearchHis onSuccess");
+            }
+
+            @Override
+            public void onError(String error) {
+                System.out.println("test update SearchHis fail");
+            }
+        });
+    }
+
+    @Test
+    public void isSearchHisExist(){
+        System.out.println("test isSearchHisExist");
+        boolean flag = testManger.isSearchHisExist("9787121060953", "bottle");
+        if (flag){
+            System.out.println("test isSearchHisExist success");
+        }else{
+            System.out.println("test isSearchHisExist fail");
+        }
+    }
+
+    @Test
+    public void queryUserById(){
+        System.out.println("test queryUserById");
+        User user = testManger.queryUserById("9787121060953");
+        System.out.println("test queryUserById:"+user.toString());
+    }
+
+    @Test
+    public void queryScore(){
+        System.out.println("test queryScore");
+        Score score = testManger.queryScore("9787121060953","W9744532339");
+        System.out.println("test queryScore:"+score.toString());
+    }
+
+    @Test
+    public void insertScore(){
+        System.out.println("test insert Score");
+
+        testManger.insertScore("9787121060953", "W9744532339", "5.0", new testManger.IListener() {
+            @Override
+            public void onSuccess() {
+                System.out.println("test insert Score success");
+            }
+
+            @Override
+            public void onError(String error) {
+                System.out.println("test insert Score fail");
+            }
+        });
+    }
+
+    @Test
+    public void updateScore(){
+        System.out.println("test update Score");
+        testManger.updateScore("9787121060953", "W9744532339", "5.0", new testManger.IListener() {
+            @Override
+            public void onSuccess() {
+                System.out.println("test update Score success");
+            }
+
+            @Override
+            public void onError(String error) {
+                System.out.println("test update Score fail");
+            }
+        });
+    }
+
+    @Test
+    public void isScoreExist(){
+        System.out.println("test isScoreExist");
+        boolean flag = testManger.isScoreExist("9787121060953", "W9744532339");
+        System.out.println("test isScoreExist:"+flag);
+    }
+
+    @Test
+    public void getSearchWasteHisByUser(){
+        System.out.println("test get SearchWasteHis By User");
+        testManger.getSearchWasteHisByUser("9787121060953", new testManger.ISearchWasteHisListener() {
+            @Override
+            public void onSuccess(String searchWasteHis) {
+                System.out.println("test get SearchWasteHis By User success");
+            }
+
+            @Override
+            public void onError(String error) {
+                System.out.println("test get SearchWasteHis By User fail");
+            }
+        });
+    }
+
+    @Test
+    public void isSearchWasteBefore(){
+        System.out.println("test isSearchWasteBefore");
+        boolean flag = testManger.isSearchWasteBefore("9787121060953", "W9744532339");
+        System.out.println("test isSearchWasteBefore:"+flag);
     }
 }

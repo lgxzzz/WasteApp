@@ -6,6 +6,7 @@ import android.util.Log;
 import com.mysql.app.bean.Evaluation;
 import com.mysql.app.bean.Score;
 import com.mysql.app.bean.SearchHis;
+import com.mysql.app.bean.SearchWasteHis;
 import com.mysql.app.bean.User;
 import com.mysql.app.bean.Waste;
 import com.mysql.app.data.DBManger;
@@ -46,10 +47,6 @@ public class testManger {
 
     //用户登陆
     public void login(String email, String password, IListener listener){
-        if (conn == null) {
-            listener.onError("connect sql fail");
-            return;
-        }
         //判断用户是否存在
         if (!isUserExist(email)){
             listener.onError("The user does not exist");
@@ -310,7 +307,7 @@ public class testManger {
         }
     }
 
-    public void updateWasteScore(Waste waste,String scroe){
+    public void updateWasteScore(Waste waste,String scroe,IListener listener){
         // 插入数据的 sql 语句
         //(WASTE_ID, WASTE_NAME,WASTE_TYPE,WASTE_DES,USER_ID,WASTE_BARCODE,WASTE_SCORE,CREAT_TIME) values (?,?,?,?,?,?,?,?)";
         String insert_user_sql = "update Waste set WASTE_SCORE= ? where WASTE_ID = ?";
@@ -326,9 +323,9 @@ public class testManger {
             // 执行语句
             int x = ps.executeUpdate();
             if (x!=-1){
-
+                listener.onSuccess();
             }else{
-
+                listener.onError("");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -799,6 +796,571 @@ public class testManger {
         return score;
     };
 
+    //删除关联的垃圾搜索历史记录
+    public void deleteSearcWasteHis(String waste_id,IListener listener){
+        String insert_user_sql = "delete from SearcWasteHis where WASTE_ID =?";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return;
+        }
+        try {
+            ps = conn.prepareStatement(insert_user_sql);
+            // 为两个 ? 设置具体的值
+            ps.setString(1, waste_id);
+            // 执行语句
+            int x = ps.executeUpdate();
+            if (x!=-1){
+                listener.onSuccess();
+            }else{
+                listener.onError("");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    //查询该垃圾的所有评分
+    public void queryWasteScores(Waste waste, testManger.IScoreListener listener ){
+        List<Score> scores = new ArrayList<>();
+        // 插入数据的 sql 语句
+        String sql = "select * from Score where WASTE_ID = ?";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return;
+        }
+        try {
+
+            ResultSet rs = null;
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, waste.getId());
+            // 执行语句
+            rs = ps.executeQuery();
+
+            JSONArray jsonArray = new JSONArray();
+            if (rs!=null){
+                // 展开结果集数据库
+                while(rs.next()){
+                    // 通过字段检索
+                    String SCORE_ID = rs.getString("SCORE_ID");
+                    String WASTE_ID = rs.getString("WASTE_ID");
+                    String USER_ID = rs.getString("USER_ID");
+                    String SCORE_VALUE = rs.getString("SCORE_VALUE");
+                    long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
+
+                    Score score = new Score();
+                    score.setId(SCORE_ID);
+                    score.setWasteId(WASTE_ID);
+                    score.setUserId(USER_ID);
+                    score.setScore(SCORE_VALUE);
+                    score.setTime(CREAT_TIME);
+                    scores.add(score);
+
+                    JSONObject object = new JSONObject();
+                    object.put("WASTE_ID",WASTE_ID);
+                    object.put("SCORE_ID",SCORE_ID);
+                    object.put("USER_ID",USER_ID);
+                    object.put("SCORE_VALUE",SCORE_VALUE);
+                    object.put("CREAT_TIME",CREAT_TIME);
+
+                    jsonArray.put(object);
+                }
+                listener.onSuccess(jsonArray.toString());
+            }
+            rs.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            listener.onError("");
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    //获取所有垃圾数据
+    public Waste getWastesById(String waste_id){
+        Waste waste = new Waste();
+        // 插入数据的 sql 语句
+        String sql = "select * from Waste where WASTE_ID = ?";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return null;
+        }
+        try {
+
+            ResultSet rs = null;
+            ps = conn.prepareStatement(sql);
+            ps.setString(1,waste_id);
+            // 执行语句
+            rs = ps.executeQuery();
+            if (rs!=null){
+                // 展开结果集数据库
+                while(rs.next()){
+                    // 通过字段检索
+                    String WASTE_ID = rs.getString("WASTE_ID");
+                    String WASTE_NAME = rs.getString("WASTE_NAME");
+                    String WASTE_TYPE = rs.getString("WASTE_TYPE");
+                    String WASTE_DES = rs.getString("WASTE_DES");
+                    String USER_ID = rs.getString("USER_ID");
+                    String WASTE_BARCODE = rs.getString("WASTE_BARCODE");
+                    String WASTE_SCORE = rs.getString("WASTE_SCORE");
+                    long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
+                    User user = queryUserById(USER_ID);
+                    waste.setId(WASTE_ID);
+                    waste.setName(WASTE_NAME);
+                    waste.setType(WASTE_TYPE);
+                    waste.setDescription(WASTE_DES);
+                    waste.setUserId(USER_ID);
+                    waste.setBarCode(WASTE_BARCODE);
+                    waste.setScore(WASTE_SCORE);
+                    waste.setTime(CREAT_TIME);
+                    waste.setmUser(user);
+                }
+            }
+            // 完成后关闭
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return waste;
+    }
+
+    //获取该用户的历史搜索关键字
+    public void getSearchHisByUser(String user_id, testManger.ISearchHisListener listener){
+        List<SearchHis> searchHis = new ArrayList<>();
+        // 插入数据的 sql 语句
+        String sql = "select * from SearchHis where USER_ID = ? ORDER BY CREAT_TIME DESC";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return;
+        }
+        try {
+
+            ResultSet rs = null;
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, user_id);
+            // 执行语句
+            rs = ps.executeQuery();
+
+            JSONArray jsonArray = new JSONArray();
+            if (rs!=null){
+                // 展开结果集数据库
+                while(rs.next()){
+                    // 通过字段检索
+                    String SEARCH_ID = rs.getString("SEARCH_ID");
+                    String USER_ID = rs.getString("USER_ID");
+                    String SEARCH_KEY = rs.getString("SEARCH_KEY");
+                    long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
+
+                    SearchHis searchHis1 = new SearchHis();
+                    searchHis1.setUserId(user_id);
+                    searchHis1.setId(SEARCH_ID);
+                    searchHis1.setSearchKey(SEARCH_KEY);
+                    searchHis1.setTime(CREAT_TIME);
+                    searchHis.add(searchHis1);
+
+                    JSONObject object = new JSONObject();
+                    object.put("SEARCH_ID",SEARCH_ID);
+                    object.put("USER_ID",USER_ID);
+                    object.put("SEARCH_KEY",SEARCH_KEY);
+                    object.put("CREAT_TIME",CREAT_TIME);
+                    jsonArray.put(object);
+                }
+                listener.onSuccess(jsonArray.toString());
+            }
+            rs.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            listener.onError("");
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    //根据关键字搜索垃圾，如果不是游客，则添加该搜索关键字记录
+    public void searchWasteByKeyWord(String key, testManger.IWasteListener listener){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Waste> wastes = new ArrayList<>();
+                // 插入数据的 sql 语句
+                String sql = "select * from Waste where WASTE_NAME like ? or WASTE_TYPE like ? or WASTE_DES like ? or WASTE_BARCODE like ? ORDER BY CREAT_TIME DESC";
+                PreparedStatement ps = null;
+                if (conn == null) {
+                    return;
+                }
+                try {
+
+                    ResultSet rs = null;
+                    ps = conn.prepareStatement(sql);
+                    ps.setString(1, "%"+key+"%");
+                    ps.setString(2, "%"+key+"%");
+                    ps.setString(3, "%"+key+"%");
+                    ps.setString(4, "%"+key+"%");
+                    // 执行语句
+                    rs = ps.executeQuery();
+                    JSONArray jsonArray = new JSONArray();
+                    if (rs!=null){
+                        // 展开结果集数据库
+                        while(rs.next()){
+                            // 通过字段检索
+                            String WASTE_ID = rs.getString("WASTE_ID");
+                            String WASTE_NAME = rs.getString("WASTE_NAME");
+                            String WASTE_TYPE = rs.getString("WASTE_TYPE");
+                            String WASTE_DES = rs.getString("WASTE_DES");
+                            String USER_ID = rs.getString("USER_ID");
+                            String WASTE_BARCODE = rs.getString("WASTE_BARCODE");
+                            String WASTE_SCORE = rs.getString("WASTE_SCORE");
+                            long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
+                            User user = queryUserById(USER_ID);
+                            Waste waste = new Waste();
+                            waste.setmUser(user);
+                            waste.setId(WASTE_ID);
+                            waste.setName(WASTE_NAME);
+                            waste.setType(WASTE_TYPE);
+                            waste.setDescription(WASTE_DES);
+                            waste.setUserId(USER_ID);
+                            waste.setBarCode(WASTE_BARCODE);
+                            waste.setScore(WASTE_SCORE);
+                            waste.setTime(CREAT_TIME);
+
+                            wastes.add(waste);
+
+                            JSONObject object = new JSONObject();
+                            object.put("WASTE_ID",WASTE_ID);
+                            object.put("WASTE_NAME",WASTE_NAME);
+                            object.put("WASTE_TYPE",WASTE_TYPE);
+                            object.put("WASTE_DES",WASTE_DES);
+                            object.put("USER_ID",USER_ID);
+                            object.put("WASTE_BARCODE",WASTE_BARCODE);
+                            object.put("WASTE_SCORE",WASTE_SCORE);
+                            object.put("CREAT_TIME",CREAT_TIME);
+
+                            jsonArray.put(object);
+                        }
+                        listener.onSuccess(jsonArray.toString());
+                    }
+                    // 完成后关闭
+                    rs.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    listener.onError("");
+                } finally {
+                    if (ps != null) {
+                        try {
+                            ps.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
+    //更新搜索历史关键字
+    public void updateSearchHis(String user_id,String key,IListener listener){
+        // 更新 sql 语句
+        String update_user_sql = "update SearchHis set CREAT_TIME =? where SEARCH_KEY = ? and USER_ID = ?";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return;
+        }
+        try {
+            ps = conn.prepareStatement(update_user_sql);
+            // 为两个 ? 设置具体的值
+            ps.setLong(1, System.currentTimeMillis());
+            ps.setString(2, key);
+            ps.setString(3, user_id);
+            // 执行语句
+            int x = ps.executeUpdate();
+            if (x!=-1){
+                listener.onSuccess();
+            }else{
+                listener.onError("");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    //是否存在该搜索历史关键字
+    public boolean isSearchHisExist(String user_id,String key){
+        // 插入数据的 sql 语句
+        String insert_user_sql = "select * from SearchHis where SEARCH_KEY = ? and USER_ID = ?";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return false;
+        }
+        try {
+            ResultSet rs = null;
+            ps = conn.prepareStatement(insert_user_sql);
+            String userid = getRandomUSER_ID();
+            // 为两个 ? 设置具体的值
+            ps.setString(1,key);
+            ps.setString(2,user_id);
+            // 执行语句
+            rs = ps.executeQuery();
+            if (rs!=null){
+                while (rs.next()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
+
+    //添加搜索历史关键字
+    public void insertSearchHis(User user,String key){
+        if(user!=null){
+            // 插入数据的 sql 语句
+            String insert_sql = "insert into SearchHis (SEARCH_ID,USER_ID, SEARCH_KEY,CREAT_TIME) values (?,?,?,?)";
+            PreparedStatement ps = null;
+            if (conn == null) {
+                return;
+            }
+            try {
+                ps = conn.prepareStatement(insert_sql);
+                String search_id = getRandomSEARCH_ID();
+                // 为两个 ? 设置具体的值
+                ps.setString(1, search_id);
+                ps.setString(2, user.getUserId());
+                ps.setString(3, key);
+                ps.setLong(4, System.currentTimeMillis());
+                int x = ps.executeUpdate();
+                if (x!=-1){
+                    Log.e("lgx","insert searchhis sucess");
+                }else{
+                    Log.e("lgx","insert searchhis fail");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (ps != null) {
+                    try {
+                        ps.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    };
+
+    //查询分数
+    public void insertScore(String user_id, String waste_id, String value, testManger.IListener listener){
+        // 更新 sql 语句
+        String insert_user_sql = "insert into Score (SCORE_ID,WASTE_ID,USER_ID, SCORE_VALUE,CREAT_TIME) values (?,?,?,?,?)";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return;
+        }
+        try {
+            String score_id = getRandomScore_ID();
+
+            ps = conn.prepareStatement(insert_user_sql);
+            // 为两个 ? 设置具体的值
+            ps.setString(1, score_id);
+            ps.setString(2, waste_id);
+            ps.setString(3, user_id);
+            ps.setString(4, value);
+            ps.setLong(5, System.currentTimeMillis());
+            // 执行语句
+            int x = ps.executeUpdate();
+            if (x!=-1){
+                listener.onSuccess();
+            }else{
+                listener.onError("update fail！");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    //修改评分
+    public void updateScore(String user_id, String waste_id, String value, testManger.IListener listener){
+        // 更新 sql 语句
+        String update_user_sql = "update Score set SCORE_VALUE =? where USER_ID = ? and WASTE_ID = ?";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return;
+        }
+        try {
+            ps = conn.prepareStatement(update_user_sql);
+            // 为两个 ? 设置具体的值
+            ps.setString(1, value);
+            ps.setString(2, user_id);
+            ps.setString(3, waste_id);
+            // 执行语句
+            int x = ps.executeUpdate();
+            if (x!=-1){
+                listener.onSuccess();
+            }else{
+                listener.onError("update fail！");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    //是否该用户已经评论过该垃圾
+    public boolean isScoreExist(String user_id, String waste_id){
+        // 插入数据的 sql 语句
+        String insert_user_sql = "select * from Score where USER_ID = ? and WASTE_ID = ?";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return false;
+        }
+        try {
+            ResultSet rs = null;
+            ps = conn.prepareStatement(insert_user_sql);
+            // 为两个 ? 设置具体的值
+            ps.setString(1, user_id);
+            ps.setString(2, waste_id);
+            // 执行语句
+            rs = ps.executeQuery();
+            if (rs!=null){
+                while (rs.next()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
+
+    //根据用户获取搜索记录
+    public void getSearchWasteHisByUser(String user_id, testManger.ISearchWasteHisListener listener){
+        List<SearchWasteHis> searchWasteHis = new ArrayList<>();
+        // 插入数据的 sql 语句
+        String sql = "select * from SearcWasteHis where USER_ID = ?";
+        PreparedStatement ps = null;
+        if (conn == null) {
+            return;
+        }
+        try {
+
+            ResultSet rs = null;
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, user_id);
+            // 执行语句
+            rs = ps.executeQuery();
+            JSONArray jsonArray = new JSONArray();
+            if (rs!=null){
+                // 展开结果集数据库
+                while(rs.next()){
+                    String SEACH_WASTE_HIS_ID = rs.getString("SEACH_WASTE_HIS_ID");
+                    String WASTE_ID = rs.getString("WASTE_ID");
+                    String USER_ID = rs.getString("USER_ID");
+                    long CREAT_TIME = rs.getBigDecimal("CREAT_TIME").longValue();
+
+                    Waste waste = getWastesById(WASTE_ID);
+
+                    SearchWasteHis searchWasteHis1 = new SearchWasteHis();
+                    searchWasteHis1.setId(SEACH_WASTE_HIS_ID);
+                    searchWasteHis1.setWasteId(WASTE_ID);
+                    searchWasteHis1.setUserId(USER_ID);
+                    searchWasteHis1.setTime(CREAT_TIME);
+                    searchWasteHis1.setmWaste(waste);
+                    searchWasteHis.add(searchWasteHis1);
+
+                    JSONObject object = new JSONObject();
+                    object.put("SEACH_WASTE_HIS_ID",SEACH_WASTE_HIS_ID);
+                    object.put("WASTE_ID",WASTE_ID);
+                    object.put("USER_ID",USER_ID);
+                    object.put("CREAT_TIME",CREAT_TIME);
+
+                    jsonArray.put(object);
+
+                }
+                listener.onSuccess(jsonArray.toString());
+            }
+            // 完成后关闭
+            rs.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            listener.onError("");
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     String pattern = "yyyy-MM-dd HH:mm:ss";
     public static long getStringToDate(String dateString, String pattern) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
@@ -875,7 +1437,7 @@ public class testManger {
     };
 
     public interface ISearchHisListener{
-        public void onSuccess(List<SearchHis> searchHis);
+        public void onSuccess(String searchHis);
         public void onError(String error);
     };
 
@@ -886,6 +1448,16 @@ public class testManger {
 
     public interface ISearchWasteHisWasteListener{
         public void onSuccess(String wastes);
+        public void onError(String error);
+    };
+
+    public interface IScoreListener{
+        public void onSuccess(String scores);
+        public void onError(String error);
+    };
+
+    public interface ISearchWasteHisListener{
+        public void onSuccess(String searchWasteHis);
         public void onError(String error);
     };
 }
