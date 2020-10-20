@@ -180,10 +180,10 @@ public class WasteEditActivity extends AppCompatActivity {
                     Toast.makeText(WasteEditActivity.this,"Waste type is Must be chosen", Toast.LENGTH_LONG).show();
                     return;
                 }
-                if (mWaste.getBarCode()==null){
-                    Toast.makeText(WasteEditActivity.this,"Waste barcode is a required field and cannot be empty", Toast.LENGTH_LONG).show();
-                    return;
-                }
+//                if (mWaste.getBarCode()==null){
+//                    Toast.makeText(WasteEditActivity.this,"Waste barcode is a required field and cannot be empty", Toast.LENGTH_LONG).show();
+//                    return;
+//                }
                 if (mWaste.getDescription()!=null&& mWaste.getDescription().length()>100){
                     Toast.makeText(WasteEditActivity.this,"Waste disposal description input should not exceed 100 characters.", Toast.LENGTH_LONG).show();
                     return;
