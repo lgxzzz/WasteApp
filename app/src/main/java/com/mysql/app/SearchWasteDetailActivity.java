@@ -103,9 +103,7 @@ public class SearchWasteDetailActivity extends Activity{
                     @Override
                     public void onClick(View v) {
                         String comment = mCommentEd.getText().toString();
-                        if (comment.length()!=0){
-                            sendComment(comment);
-                        }
+                        sendComment(comment);
                     }
                 });
             }
@@ -135,9 +133,7 @@ public class SearchWasteDetailActivity extends Activity{
                 @Override
                 public void onClick(View v) {
                     String comment = mCommentEd.getText().toString();
-                    if (comment.length()!=0){
-                        sendComment(comment);
-                    }
+                    sendComment(comment);
                 }
             });
 
@@ -178,28 +174,31 @@ public class SearchWasteDetailActivity extends Activity{
 
     //添加评论消息
     public void sendComment(String comment){
+        if (comment.length()==0){
+            Toast.makeText(SearchWasteDetailActivity.this,"Cannot send empty comment",Toast.LENGTH_LONG).show();
+        }else{
+            Evaluation evaluation = new Evaluation();
+            evaluation.setComment(comment);
+            evaluation.setUserId(mUser.getUserId());
+            evaluation.setWasteId(mWaste.getId());
 
-        Evaluation evaluation = new Evaluation();
-        evaluation.setComment(comment);
-        evaluation.setUserId(mUser.getUserId());
-        evaluation.setWasteId(mWaste.getId());
+            DBManger.getInstance(SearchWasteDetailActivity.this).insertEvaluation(evaluation, new DBManger.IListener() {
+                @Override
+                public void onSuccess() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            initData();
+                        }
+                    });
+                }
 
-        DBManger.getInstance(SearchWasteDetailActivity.this).insertEvaluation(evaluation, new DBManger.IListener() {
-            @Override
-            public void onSuccess() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        initData();
-                    }
-                });
-            }
+                @Override
+                public void onError(String error) {
 
-            @Override
-            public void onError(String error) {
-
-            }
-        });
+                }
+            });
+        }
     }
 
     //获取评论列表

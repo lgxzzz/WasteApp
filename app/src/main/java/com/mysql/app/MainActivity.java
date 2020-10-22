@@ -55,8 +55,10 @@ public class MainActivity extends BaseActivtiy {
             mBottomMenu.setSelectedItemId(R.id.bottom_menu_about);
             showFragment(R.id.bottom_menu_about);
         }else{
-            mBottomMenu.setSelectedItemId(R.id.bottom_menu_scan);
-            showFragment(R.id.bottom_menu_scan);
+//            mBottomMenu.setSelectedItemId(R.id.bottom_menu_scan);
+//            showFragment(R.id.bottom_menu_scan);
+            mBottomMenu.setSelectedItemId(R.id.bottom_menu_search);
+            showFragment(R.id.bottom_menu_search);
         }
 
 
