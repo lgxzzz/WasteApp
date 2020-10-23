@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.mysql.app.adapter.SearchWasteAdapter;
 import com.mysql.app.bean.User;
@@ -66,10 +67,14 @@ public class SearchResultActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (mWastes.size()==0){
+                            Toast.makeText(SearchResultActivity.this,"no relevant wastes",Toast.LENGTH_LONG).show();
+                        }
                         mAdapter = new SearchWasteAdapter(SearchResultActivity.this,mWastes);
                         mListView.setAdapter(mAdapter);
                     }
                 });
+
             }
 
             @Override

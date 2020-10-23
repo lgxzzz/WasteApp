@@ -29,7 +29,7 @@ public class DBManger {
     public static  DBManger instance;
 
 //    private static final String REMOTE_IP = "10.0.2.2";
-    private static final String REMOTE_IP = "192.168.251.1";
+    private static final String REMOTE_IP = "192.168.43.209";
 //    private static final String REMOTE_IP = "172.20.10.2";
     private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/sys";
 //    private static final String URL = "jdbc:mysql://" + REMOTE_IP + ":3306/test_db??autoReconnect=true";
@@ -958,6 +958,9 @@ public class DBManger {
         if (conn == null) {
             return false;
         }
+        if(user == null){
+            return false;
+        }
         try {
             ResultSet rs = null;
             ps = conn.prepareStatement(insert_user_sql);
@@ -1291,7 +1294,7 @@ public class DBManger {
 
                 List<SearchWasteHis> searchWasteHis = new ArrayList<>();
                 // 插入数据的 sql 语句
-                String sql = "select * from SearcWasteHis where USER_ID = ?";
+                String sql = "select * from SearcWasteHis where USER_ID = ? ORDER BY CREAT_TIME DESC";
                 PreparedStatement ps = null;
                 if (conn == null) {
                     return;
